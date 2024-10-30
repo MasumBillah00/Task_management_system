@@ -135,6 +135,7 @@ import 'package:flutter/material.dart';
 import 'package:taskmanagement/screens/task_list_screen.dart';
 
 import '../models/task_model.dart';
+import 'calender_task_view.dart';
 
 class TaskAddScreen extends StatefulWidget {
   @override
@@ -249,6 +250,15 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                     );
                   },
                   child: Text("Task List"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CalendarTaskViewScreen()),
+                    );
+                  },
+                  child: Text("Calender"),
                 ),
               ],
             ),

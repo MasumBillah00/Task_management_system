@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskmanagement/screens/calender_task_view.dart';
 import 'package:taskmanagement/screens/task_add_screen.dart';
 import 'package:taskmanagement/screens/team/create_team.dart';
 import 'package:taskmanagement/screens/team_member/add_team_member_screen.dart';
@@ -21,7 +22,7 @@ class AdminHomeScreen extends StatelessWidget {
               context,
               title: "Add Task",
               description: "Create and assign a new task",
-              icon: Icons.assignment,
+              icon: Icons.add_task,
               onTap: () {
                 Navigator.push(
                   context,
@@ -34,7 +35,7 @@ class AdminHomeScreen extends StatelessWidget {
               context,
               title: "Add Team Member",
               description: "Add a new team member",
-              icon: Icons.group_add,
+              icon: Icons.person_add_alt_1_sharp,
               onTap: () {
                 Navigator.push(
                   context,
@@ -47,11 +48,24 @@ class AdminHomeScreen extends StatelessWidget {
               context,
               title: "Create Team",
               description: "Create Team for new Task",
-              icon: Icons.assignment,
+              icon: Icons.group_add,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CreateTeamScreen()),
+                );
+              },
+            ),
+
+            _buildNavigationCard(
+              context,
+              title: "Date View",
+              description: "View task according to date",
+              icon: Icons.task,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>CalendarTaskViewScreen()),
                 );
               },
             ),

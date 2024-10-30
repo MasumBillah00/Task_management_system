@@ -2,9 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taskmanagement/home.dart';
-import 'package:taskmanagement/screens/task_add_screen.dart';
-import 'package:taskmanagement/students.dart';
-import 'package:taskmanagement/teachers.dart';
+import 'package:taskmanagement/screens/user/assign_task_list.dart';
+
 
 import 'register.dart';
 
@@ -308,7 +307,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>  Student(),
+              builder: (context) =>  AssignedTaskListScreen(),
             ),
           );
         }
@@ -337,5 +336,3 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 }
-
-
