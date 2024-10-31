@@ -16,7 +16,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Task List"),
+        title: const Text("Task List"),
       ),
       body: Column(
         children: [
@@ -29,7 +29,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(labelText: "Filter by Priority"),
+                        decoration: const InputDecoration(labelText: "Filter by Priority"),
                         value: _selectedPriority,
                         items: ['Low', 'Medium', 'High']
                             .map((priority) => DropdownMenuItem(
@@ -44,10 +44,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         },
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(labelText: "Filter by Status"),
+                        decoration: const InputDecoration(labelText: "Filter by Status"),
                         value: _selectedStatus,
                         items: ['Not Started', 'In Progress', 'Completed']
                             .map((status) => DropdownMenuItem(
@@ -69,7 +69,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(labelText: "Sort by"),
+                        decoration:const InputDecoration(labelText: "Sort by"),
                         value: _sortOption,
                         items: ['Deadline', 'Priority']
                             .map((sortOption) => DropdownMenuItem(
@@ -95,10 +95,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
               stream: _buildFilteredStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No tasks available"));
+                  return const Center(child: Text("No tasks available"));
                 }
 
                 // Map to task model
@@ -143,7 +143,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   Widget _buildTaskCard(Task task) {
     return Card(
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -174,7 +174,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             width: 150,
             child: Text(
               "$label:",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style:const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(

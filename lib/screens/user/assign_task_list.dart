@@ -9,16 +9,16 @@ class AssignedTaskListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("All Tasks"),
+        title: const Text("All Tasks"),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('tasks').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("No tasks available"));
+            return const Center(child: Text("No tasks available"));
           }
 
           // Map Firestore data to Task model without filtering for assigned users
@@ -31,7 +31,7 @@ class AssignedTaskListScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final task = tasks[index];
               return Card(
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
@@ -39,17 +39,17 @@ class AssignedTaskListScreen extends StatelessWidget {
                     children: [
                       Text(
                         task.taskName,
-                        style: TextStyle(
+                        style:const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                           color: Colors.blueAccent,
                         ),
                       ),
-                      SizedBox(height: 5),
+                     const SizedBox(height: 5),
                       Text(task.description),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       ElevatedButton(
-                        child: Text('Update Task'),
+                        child: const Text('Update Task'),
                         onPressed: () {
                           // Navigator.push(
                           //   context,

@@ -36,9 +36,9 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
       setState(() {
         _selectedMembers.clear(); // Reset selected members
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Team created successfully!")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Team created successfully!")));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all fields")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
     }
   }
 
@@ -46,7 +46,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Team"),
+        title: const Text("Create Team"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -54,9 +54,9 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
           children: [
             TextField(
               controller: _teamNameController,
-              decoration: InputDecoration(labelText: "Team Name"),
+              decoration: const InputDecoration(labelText: "Team Name"),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: _members.length,
@@ -77,10 +77,10 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                 },
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _createTeam,
-              child: Text("Create Team"),
+              child: const Text("Create Team"),
             ),
             ElevatedButton(onPressed: (){
               Navigator.push(

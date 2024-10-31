@@ -51,10 +51,10 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Task Calendar"),
+        title: const Text("Task Calendar"),
         actions: [
           IconButton(
-            icon: Icon(Icons.view_agenda),
+            icon: const Icon(Icons.view_agenda),
             onPressed: () {
               setState(() {
                 _calendarFormat = CalendarFormat.week;
@@ -62,7 +62,7 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.calendar_view_month),
+            icon: const Icon(Icons.calendar_month_outlined,size: 20,),
             onPressed: () {
               setState(() {
                 _calendarFormat = CalendarFormat.month;
@@ -88,7 +88,7 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
             eventLoader: (day) {
               return _tasksByDate[DateTime(day.year, day.month, day.day)] ?? [];
             },
-            calendarStyle: CalendarStyle(
+            calendarStyle: const CalendarStyle(
               todayDecoration: BoxDecoration(
                 color: Colors.blueAccent,
                 shape: BoxShape.circle,
@@ -101,7 +101,7 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
           ),
           Expanded(
             child: _selectedDay == null
-                ? Center(child: Text("Select a day to view tasks"))
+                ? const Center(child: Text("Select a day to view tasks"))
                 : _buildTaskListForSelectedDate(),
           ),
         ],
@@ -117,7 +117,7 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
     );
 
     if (_tasksByDate[selectedDate] == null || _tasksByDate[selectedDate]!.isEmpty) {
-      return Center(child: Text("No tasks available"));
+      return const Center(child: Text("No tasks available"));
     }
 
     List<Task> tasks = _tasksByDate[selectedDate]!;

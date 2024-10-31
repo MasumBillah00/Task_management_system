@@ -9,16 +9,16 @@ class MemberListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Team Members"),
+        title: const Text("Team Members"),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('team_members').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("No team members available"));
+            return const Center(child: Text("No team members available"));
           }
           List<TeamMember> members = snapshot.data!.docs
               .map((doc) => TeamMember.fromMap(doc.data() as Map<String, dynamic>))
@@ -29,7 +29,7 @@ class MemberListScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final member = members[index];
               return Card(
-                margin: EdgeInsets.all(8),
+                margin:const  EdgeInsets.all(8),
                 child: ListTile(
                   title: Text(member.name),
                   subtitle: Text("Role: ${member.role}\nEmail: ${member.email}"),

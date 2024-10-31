@@ -27,26 +27,26 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: "Name"),
+                decoration: const InputDecoration(labelText: "Name"),
                 validator: (value) =>
                 value!.isEmpty ? "Please enter a name" : null,
               ),
               TextFormField(
                 controller: _roleController,
-                decoration: InputDecoration(labelText: "Role"),
+                decoration: const InputDecoration(labelText: "Role"),
                 validator: (value) =>
                 value!.isEmpty ? "Please enter a role" : null,
               ),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: "Email"),
+                decoration: const InputDecoration(labelText: "Email"),
                 validator: (value) =>
                 value!.isEmpty ? "Please enter an email" : null,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => _addMember(),
-                child: Text("Add Member"),
+                child: const Text("Add Member"),
               ),
               ElevatedButton(
                 onPressed: (){
@@ -55,7 +55,7 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
                     MaterialPageRoute(builder: (context) =>MemberListScreen()),
                   );
                 },
-                child: Text("Team Member"),
+                child: const Text("Team Member"),
               ),
             ],
           ),
@@ -75,11 +75,11 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
       await FirebaseFirestore.instance.collection('team_members').add(newMember.toMap());
 
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Member added successfully")));
+          .showSnackBar(const SnackBar(content: Text("Member added successfully")));
       Navigator.pop(context); // Go back after adding the member
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Please complete the form")));
+          .showSnackBar(const SnackBar(content: Text("Please complete the form")));
     }
   }
 }
