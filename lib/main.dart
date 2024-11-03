@@ -1,6 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskmanagement/loginpage.dart';
+
+import 'logic/bloc/task_bloc.dart'; // Adjust the import based on your structure
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -8,14 +11,9 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override
-  MyAppState createState() => MyAppState();
-}
-
-class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +21,10 @@ class MyAppState extends State<MyApp> {
       theme: ThemeData(
         primaryColor: Colors.blue[900],
       ),
-      home: LoginPage(),
+      home: BlocProvider(
+        create: (context) => TaskBloc(), // Provide TaskBloc
+        child: LoginPage(),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/team_member_model.dart';
+import '../../data/models/team_member_model.dart';
 
 
 class MemberListScreen extends StatelessWidget {

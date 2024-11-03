@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taskmanagement/screens/team_member/team_member_list_screen.dart';
 
-import '../../models/team_member_model.dart';
+import '../../data/models/team_member_model.dart';
 
 class MemberAddScreen extends StatefulWidget {
   @override
@@ -70,10 +70,9 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
         name: _nameController.text,
         role: _roleController.text,
         email: _emailController.text,
+        id: '',
       );
-
       await FirebaseFirestore.instance.collection('team_members').add(newMember.toMap());
-
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Member added successfully")));
       Navigator.pop(context); // Go back after adding the member

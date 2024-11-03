@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/task_model.dart';
-
+import '../../data/models/task_model.dart';
 
 class AssignedTaskListScreen extends StatelessWidget {
   @override
