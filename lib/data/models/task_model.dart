@@ -55,7 +55,7 @@ class Task {
     required this.deadline,
     required this.assignedUsers,
     required this.status,
-    this.isSynced = false, required String name,
+    this.isSynced = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -71,20 +71,36 @@ class Task {
     };
   }
 
+  // factory Task.fromMap(Map<String, dynamic> map) {
+  //   return Task(
+  //     id: map['id'] ?? '',
+  //     taskName: map['taskName'],
+  //     description: map['description'],
+  //     priority: map['priority'],
+  //     deadline: DateTime.parse(map['deadline']),
+  //     assignedUsers: List<String>.from(map['assignedUsers'].split(',')),
+  //     status: map['status'],
+  //     isSynced: map['isSynced'] == 1,
+  //   );
+  // }
+
+  // For Firebase serialization
+
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
-      id: map['id'],
-      taskName: map['taskName'],
-      description: map['description'],
-      priority: map['priority'],
-      deadline: DateTime.parse(map['deadline']),
-      assignedUsers: List<String>.from(map['assignedUsers'].split(',')),
-      status: map['status'],
-      isSynced: map['isSynced'] == 1, name: '',
+      id: map['id'] ?? '', // Default to empty string if null
+      taskName: map['taskName'] ?? '',
+      description: map['description'] ?? '',
+      priority: map['priority'] ?? '',
+      deadline: map['deadline'] != null ? DateTime.parse(map['deadline']) : DateTime.now(),
+      assignedUsers: map['assignedUsers'] is List<dynamic>
+          ? List<String>.from(map['assignedUsers'])
+          : (map['assignedUsers'] ?? '').toString().split(','),
+      status: map['status'] ?? '',
+      isSynced: map['isSynced'] == 1,
     );
   }
 
-  // For Firebase serialization
   Map<String, dynamic> toFirestoreMap() {
     return {
       'taskName': taskName,

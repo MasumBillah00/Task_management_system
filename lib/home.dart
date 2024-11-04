@@ -5,7 +5,7 @@ import 'package:taskmanagement/screens/task_add_screen.dart';
 import 'package:taskmanagement/screens/team/create_team.dart';
 import 'package:taskmanagement/screens/team_member/add_team_member_screen.dart';
 
-import 'logic/bloc/task_bloc.dart';
+import 'logic/bloc/task_bloc/task_bloc.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   @override

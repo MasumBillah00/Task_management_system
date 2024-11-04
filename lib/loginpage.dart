@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taskmanagement/home.dart';
 import 'package:taskmanagement/screens/user/assign_task_list.dart';
-
-
 import 'register.dart';
-
-
 
 class LoginPage extends StatefulWidget {
   @override
@@ -21,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
- // final _auth = FirebaseAuth.instance;
+ final _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -335,3 +331,208 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 }
+
+
+//
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:taskmanagement/register.dart';
+// import 'package:taskmanagement/screens/user/assign_task_list.dart';
+// import 'package:taskmanagement/home.dart';
+// import 'logic/bloc/login/login_bloc.dart';
+// import 'logic/bloc/login/login_event.dart';
+// import 'logic/bloc/login/login_state.dart';
+//
+// class LoginPage extends StatefulWidget {
+//   @override
+//   _LoginPageState createState() => _LoginPageState();
+// }
+//
+// class _LoginPageState extends State<LoginPage> {
+//   bool _isObscure3 = true;
+//   bool visible = false;
+//   final _formkey = GlobalKey<FormState>();
+//   final TextEditingController emailController = TextEditingController();
+//   final TextEditingController passwordController = TextEditingController();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: BlocProvider(
+//         create: (context) => LoginBloc(),
+//         child: BlocListener<LoginBloc, LoginState>(
+//           listener: (context, state) {
+//             if (state is LoginLoading) {
+//               setState(() => visible = true);
+//             } else if (state is LoginSuccess) {
+//               setState(() => visible = false);
+//               Navigator.pushReplacement(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) =>
+//                   state.isTeacher ? AdminHomeScreen() : AssignedTaskListScreen(),
+//                 ),
+//               );
+//             } else if (state is LoginFailure) {
+//               setState(() => visible = false);
+//               ScaffoldMessenger.of(context).showSnackBar(
+//                 SnackBar(content: Text(state.error)),
+//               );
+//             }
+//           },
+//           child: SingleChildScrollView(
+//             child: Column(
+//               children: <Widget>[
+//                 Container(
+//                   color: Colors.orangeAccent[700],
+//                   width: MediaQuery.of(context).size.width,
+//                   height: MediaQuery.of(context).size.height,
+//                   child: Center(
+//                     child: Container(
+//                       margin: const EdgeInsets.all(12),
+//                       child: Form(
+//                         key: _formkey,
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           crossAxisAlignment: CrossAxisAlignment.center,
+//                           children: [
+//                             const SizedBox(height: 30),
+//                             const Text(
+//                               "Login",
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.bold,
+//                                 color: Colors.white,
+//                                 fontSize: 40,
+//                               ),
+//                             ),
+//                             const SizedBox(height: 20),
+//                             buildEmailField(),
+//                             const SizedBox(height: 20),
+//                             buildPasswordField(),
+//                             const SizedBox(height: 20),
+//                             buildLoginButton(),
+//                             const SizedBox(height: 10),
+//                             Visibility(
+//                               visible: visible,
+//                               child: const CircularProgressIndicator(
+//                                 color: Colors.white,
+//                               ),
+//                             ),
+//                             buildRegisterButton(),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget buildEmailField() {
+//     return TextFormField(
+//       controller: emailController,
+//       decoration: InputDecoration(
+//         filled: true,
+//         fillColor: Colors.white,
+//         hintText: 'Email',
+//         contentPadding: const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
+//         focusedBorder: OutlineInputBorder(
+//           borderSide: const BorderSide(color: Colors.white),
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//         enabledBorder: UnderlineInputBorder(
+//           borderSide: const BorderSide(color: Colors.white),
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//       ),
+//       validator: (value) {
+//         if (value!.isEmpty) return "Email cannot be empty";
+//         if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
+//           return "Please enter a valid email";
+//         }
+//         return null;
+//       },
+//     );
+//   }
+//
+//   Widget buildPasswordField() {
+//     return TextFormField(
+//       controller: passwordController,
+//       obscureText: _isObscure3,
+//       decoration: InputDecoration(
+//         suffixIcon: IconButton(
+//           icon: Icon(_isObscure3 ? Icons.visibility : Icons.visibility_off),
+//           onPressed: () {
+//             setState(() => _isObscure3 = !_isObscure3);
+//           },
+//         ),
+//         filled: true,
+//         fillColor: Colors.white,
+//         hintText: 'Password',
+//         contentPadding: const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 15.0),
+//         focusedBorder: OutlineInputBorder(
+//           borderSide: const BorderSide(color: Colors.white),
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//         enabledBorder: UnderlineInputBorder(
+//           borderSide: const BorderSide(color: Colors.white),
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//       ),
+//       validator: (value) {
+//         if (value!.isEmpty) return "Password cannot be empty";
+//         if (value.length < 6) return "Please enter a valid password (min. 6 characters)";
+//         return null;
+//       },
+//     );
+//   }
+//
+//   Widget buildLoginButton() {
+//     return MaterialButton(
+//       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+//       elevation: 5.0,
+//       height: 40,
+//       onPressed: () {
+//         if (_formkey.currentState!.validate()) {
+//           context.read<LoginBloc>().add(
+//             LoginButtonPressed(
+//               email: emailController.text,
+//               password: passwordController.text,
+//             ),
+//           );
+//         }
+//       },
+//       color: Colors.white,
+//       child: const Text(
+//         "Login",
+//         style: TextStyle(fontSize: 20),
+//       ),
+//     );
+//   }
+//
+//   Widget buildRegisterButton() {
+//     return MaterialButton(
+//       shape: const RoundedRectangleBorder(
+//         borderRadius: BorderRadius.all(Radius.circular(20.0)),
+//       ),
+//       elevation: 5.0,
+//       height: 40,
+//       onPressed: () {
+//         Navigator.pushReplacement(
+//           context,
+//           MaterialPageRoute(builder: (context) => const Register()),
+//         );
+//       },
+//       color: Colors.blue[900],
+//       child: const Text(
+//         "Register Now",
+//         style: TextStyle(color: Colors.white, fontSize: 20),
+//       ),
+//     );
+//   }
+// }

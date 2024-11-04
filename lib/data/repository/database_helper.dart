@@ -89,7 +89,13 @@ class DatabaseHelper {
       join(dbPath, 'offline_tasks.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE tasks(id TEXT PRIMARY KEY, taskName TEXT, description TEXT, priority TEXT, deadline TEXT, status TEXT, isSynced INTEGER)',
+          'CREATE TABLE tasks('
+              'id TEXT PRIMARY KEY,'
+              ' taskName TEXT, '
+              'description TEXT, '
+              'priority TEXT,'
+              ' deadline TEXT, '
+              'status TEXT, isSynced INTEGER)',
         );
       },
       version: 1,
