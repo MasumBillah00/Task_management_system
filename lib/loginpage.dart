@@ -332,7 +332,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-
+//
 //
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
@@ -366,12 +366,17 @@ class _LoginPageState extends State<LoginPage> {
 //               setState(() => visible = true);
 //             } else if (state is LoginSuccess) {
 //               setState(() => visible = false);
+//               // Navigator.pushReplacement(
+//               //   context,
+//               //   MaterialPageRoute(
+//               //     builder: (context) =>
+//               //     state.isTeacher ? AdminHomeScreen() : AssignedTaskListScreen(),
+//               //   ),
+//               // );
+//
 //               Navigator.pushReplacement(
 //                 context,
-//                 MaterialPageRoute(
-//                   builder: (context) =>
-//                   state.isTeacher ? AdminHomeScreen() : AssignedTaskListScreen(),
-//                 ),
+//                 MaterialPageRoute(builder: (context) => AdminHomeScreen()),
 //               );
 //             } else if (state is LoginFailure) {
 //               setState(() => visible = false);
@@ -410,7 +415,7 @@ class _LoginPageState extends State<LoginPage> {
 //                             const SizedBox(height: 20),
 //                             buildPasswordField(),
 //                             const SizedBox(height: 20),
-//                             buildLoginButton(),
+//                             buildLoginButton(context),
 //                             const SizedBox(height: 10),
 //                             Visibility(
 //                               visible: visible,
@@ -492,7 +497,7 @@ class _LoginPageState extends State<LoginPage> {
 //     );
 //   }
 //
-//   Widget buildLoginButton() {
+//   Widget buildLoginButton(BuildContext context) {
 //     return MaterialButton(
 //       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
 //       elevation: 5.0,

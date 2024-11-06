@@ -15,4 +15,13 @@ class AddTaskEvent extends TaskEvent {
   List<Object> get props => [task];
 }
 
-class LoadTasksEvent extends TaskEvent {}
+class LoadTasksEvent extends TaskEvent {
+  final String? priority;
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  LoadTasksEvent({this.priority, this.startDate, this.endDate});
+
+  @override
+  List<Object> get props => [priority ?? '', startDate ?? '', endDate ?? ''];
+}

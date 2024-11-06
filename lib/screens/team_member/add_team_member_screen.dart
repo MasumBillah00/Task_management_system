@@ -70,9 +70,16 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
         name: _nameController.text,
         role: _roleController.text,
         email: _emailController.text,
-        id: '',
+        id: '', // This should be handled by Firestore
       );
-      await FirebaseFirestore.instance.collection('team_members').add(newMember.toMap());
+
+      // Add the new member and get the generated ID
+      DocumentReference docRef = await FirebaseFirestore.instance.collection('team_members').add(newMember.toMap());
+
+      // Update the member ID with the generated document ID
+      newMember.id = docRef.id; // Update with the Firestore document ID
+      await docRef.set(newMember.toMap(), SetOptions(merge: true)); // Merge to add the ID to Firestore
+
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Member added successfully")));
       Navigator.pop(context); // Go back after adding the member
@@ -81,4 +88,23 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
           .showSnackBar(const SnackBar(content: Text("Please complete the form")));
     }
   }
+
+
+// Future<void> _addMember() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     TeamMember newMember = TeamMember(
+  //       name: _nameController.text,
+  //       role: _roleController.text,
+  //       email: _emailController.text,
+  //       id: '',
+  //     );
+  //     await FirebaseFirestore.instance.collection('team_members').add(newMember.toMap());
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(const SnackBar(content: Text("Member added successfully")));
+  //     Navigator.pop(context); // Go back after adding the member
+  //   } else {
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(const SnackBar(content: Text("Please complete the form")));
+  //   }
+  // }
 }
