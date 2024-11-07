@@ -1,220 +1,148 @@
+// import 'package:bloc/bloc.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:taskmanagement/data/models/task_model.dart';
+// import 'task_event.dart';
+// import 'task_state.dart';
+//
+//
+// class TaskBloc extends Bloc<TaskEvent, TaskState> {
+//   TaskBloc() : super(TaskInitial()) {
+//     on<LoadTasksEvent>((event, emit) async {
+//       emit(TaskLoading());
+//
+//       try {
+//         // Fetch tasks with a potential priority filter.
+//         List<Task> tasks = await _fetchTasksFromFirebase(priority: event.priority);
+//
+//         // Log the number of tasks fetched from Firestore.
+//         print("Fetched ${tasks.length} tasks from Firestore.");
+//
+//         emit(TaskLoaded(tasks)); // Emit only once after fetching tasks
+//       } catch (e) {
+//         emit(TaskError("Failed to load tasks"));
+//       }
+//     });
+//   }
+//
+//   Future<List<Task>> _fetchTasksFromFirebase({String? priority}) async {
+//     try {
+//       Query query = FirebaseFirestore.instance.collection('tasks');
+//
+//       print("Fetching tasks with priority: $priority");
+//
+//       if (priority != null) {
+//         query = query.where('priority', isEqualTo: priority);
+//         print("Applied filter for priority: $priority");
+//       }
+//
+//       QuerySnapshot snapshot = await query.get();
+//       List<Task> tasks = snapshot.docs
+//           .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
+//           .toList();
+//
+//       return tasks;
+//     } catch (e) {
+//       print("Error fetching tasks: $e");
+//       throw Exception("Failed to fetch tasks");
+//     }
+//   }
+// }
+//
+//
+// // class TaskBloc extends Bloc<TaskEvent, TaskState> {
+// //   TaskBloc() : super(TaskInitial()) {
+// //     on<LoadTasksEvent>((event, emit) async {
+// //       emit(TaskLoading());
+// //       try {
+// //         // Fetch tasks with a potential priority filter.
+// //         List<Task> tasks = await _fetchTasksFromFirebase(priority: event.priority);
+// //         emit(TaskLoaded(tasks));
+// //       } catch (e) {
+// //         emit(TaskError("Failed to load tasks"));
+// //       }
+// //     });
+// //   }
+// //
+// //   Future<List<Task>> _fetchTasksFromFirebase({String? priority}) async {
+// //     try {
+// //       Query query = FirebaseFirestore.instance.collection('tasks');
+// //
+// //       // Debugging: Print the selected priority to check if it's passed correctly.
+// //       print("Fetching tasks with priority: $priority");
+// //
+// //       // Apply priority filter only if a specific priority is provided.
+// //       if (priority != null) {
+// //         query = query.where('priority', isEqualTo: priority); // Filtering based on priority
+// //         print("Applied filter for priority: $priority");
+// //       }
+// //
+// //       // Get the snapshot of tasks from Firebase.
+// //       QuerySnapshot snapshot = await query.get();
+// //
+// //       // Debugging: Print the number of tasks fetched
+// //       print("Fetched ${snapshot.docs.length} tasks from Firestore.");
+// //
+// //       // Map the snapshot into a list of Task objects.
+// //       List<Task> tasks = snapshot.docs
+// //           .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
+// //           .toList();
+// //
+// //       return tasks;
+// //     } catch (e) {
+// //       print("Error fetching tasks: $e");
+// //       throw Exception("Failed to fetch tasks");
+// //     }
+// //   }
+// // }
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:taskmanagement/data/models/task_model.dart';
 import 'task_event.dart';
 import 'task_state.dart';
-
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  final FlutterLocalNotificationsPlugin _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
   TaskBloc() : super(TaskInitial()) {
-    _initializeNotifications();
-
-    // on<LoadTasksEvent>((event, emit) async {
-    //   emit(TaskLoading());
-    //   try {
-    //     // Fetch tasks based on filters
-    //     List<Task> tasks = await _fetchTasksFromFirebase(
-    //       priority: event.priority,
-    //       startDate: event.startDate,
-    //       endDate: event.endDate,
-    //     );
-    //     _checkForUpcomingDeadlines(tasks);
-    //     emit(TaskLoaded(tasks));
-    //   } catch (e) {
-    //     emit(TaskError("Failed to load tasks"));
-    //   }
-    // });
-
     on<LoadTasksEvent>((event, emit) async {
-      emit(TaskLoading());
+      emit(TaskLoading()); // Start loading
+
       try {
-        // Fetch tasks based on filters
-        List<Task> tasks = await _fetchTasksFromFirebase(
-          priority: event.priority,
-          startDate: event.startDate,
-          endDate: event.endDate,
-        );
-        _checkForUpcomingDeadlines(tasks);
-        emit(TaskLoaded(tasks)); // Ensure the filtered tasks are passed here
+        // Fetch tasks from Firestore with optional priority filter
+        List<Task> tasks = await _fetchTasksFromFirebase(priority: event.priority);
+
+        print("Fetched ${tasks.length} tasks from Firestore."); // Check if tasks are returned correctly
+
+        if (tasks.isEmpty) {
+          emit(TaskError("No tasks found")); // Handle case if no tasks exist
+        } else {
+          emit(TaskLoaded(tasks)); // Emit TaskLoaded only after tasks are fetched
+        }
       } catch (e) {
+        print("Error fetching tasks: $e");  // Debugging error
         emit(TaskError("Failed to load tasks"));
-      }
-    });
-
-
-    on<AddTaskEvent>((event, emit) async {
-      try {
-        DocumentReference docRef = await FirebaseFirestore.instance.collection('tasks').add(event.task.toFirestoreMap());
-        event.task.id = docRef.id; // Set Firestore-generated ID as task's ID
-        emit(TaskAddedSuccess());
-        add(LoadTasksEvent()); // Reload tasks after adding
-      } catch (e) {
-        emit(TaskError("Failed to add task"));
       }
     });
   }
 
-  Future<List<Task>> _fetchTasksFromFirebase({
-    String? priority,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+  Future<List<Task>> _fetchTasksFromFirebase({String? priority}) async {
     try {
-      // Start with the collection reference
-      CollectionReference<Map<String, dynamic>> collection = FirebaseFirestore.instance.collection('tasks');
-      Query<Map<String, dynamic>> query = collection;
+      Query query = FirebaseFirestore.instance.collection('tasks');
 
-      if (priority != null && priority.isNotEmpty) {
+      print("Fetching tasks with priority: $priority");  // Debugging line
+
+      if (priority != null) {
         query = query.where('priority', isEqualTo: priority);
+        print("Applied filter for priority: $priority");  // Debugging line
       }
-
-      if (startDate != null && endDate != null) {
-        query = query
-            .where('deadline', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
-            .where('deadline', isLessThanOrEqualTo: Timestamp.fromDate(endDate));
-      }
-
-      // Print the query to the console for debugging
-      print("Firestore query: $query");
 
       QuerySnapshot snapshot = await query.get();
-      print("Fetched ${snapshot.docs.length} tasks from Firestore");
-
       List<Task> tasks = snapshot.docs
           .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
 
       return tasks;
     } catch (e) {
-      print("Error fetching tasks: $e"); // Log the error
-      rethrow;
-    }
-  }
-
-
-  // Initialize notification plugin
-  Future<void> _initializeNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    await _localNotificationsPlugin.initialize(initializationSettings);
-  }
-
-  // Show notification when a task deadline is approaching
-  Future<void> _showNotification(String taskName) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'task_deadline_channel', // Channel ID
-      'Upcoming Deadlines', // Channel name
-      importance: Importance.high,
-      priority: Priority.high,
-      showWhen: true,
-    );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await _localNotificationsPlugin.show(
-      0, // Notification ID
-      'Task Deadline Approaching', // Notification title
-      'The deadline for "$taskName" is in less than 3 days.', // Notification body
-      platformChannelSpecifics,
-    );
-  }
-
-  // Check if any task's deadline is approaching within 3 days and show a notification
-  void _checkForUpcomingDeadlines(List<Task> tasks) {
-    DateTime today = DateTime.now();
-
-    for (var task in tasks) {
-      if (task.deadline.difference(today).inDays <= 3 && task.deadline.isAfter(today)) {
-        _showNotification(task.taskName);
-      }
+      print("Error fetching tasks from Firestore: $e");  // More detailed error
+      throw Exception("Failed to fetch tasks");
     }
   }
 }
-
-
-// import 'package:bloc/bloc.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:taskmanagement/data/models/task_model.dart';
-// import 'task_event.dart';
-// import 'task_state.dart';
-//
-// class TaskBloc extends Bloc<TaskEvent, TaskState> {
-//   final FlutterLocalNotificationsPlugin _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
-//
-//   TaskBloc() : super(TaskInitial()) {
-//     _initializeNotifications();
-//
-//     on<LoadTasksEvent>((event, emit) async {
-//       emit(TaskLoading());
-//       try {
-//         List<Task> tasks = await _fetchTasksFromFirebase();
-//         _checkForUpcomingDeadlines(tasks);
-//         emit(TaskLoaded(tasks));
-//       } catch (e) {
-//         emit(TaskError("Failed to load tasks"));
-//       }
-//     });
-//
-//     on<AddTaskEvent>((event, emit) async {
-//       try {
-//         DocumentReference docRef = await FirebaseFirestore.instance.collection('tasks').add(event.task.toFirestoreMap());
-//         event.task.id = docRef.id; // Set Firestore-generated ID as task's ID
-//         emit(TaskAddedSuccess());
-//         add(LoadTasksEvent()); // Reload tasks after adding
-//       } catch (e) {
-//         emit(TaskError("Failed to add task"));
-//       }
-//     });
-//   }
-//   Future<List<Task>> _fetchTasksFromFirebase() async {
-//     try {
-//       QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('tasks').get();
-//       List<Task> tasks = snapshot.docs.map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>)).toList();
-//       return tasks;
-//     } catch (e) {
-//       rethrow;
-//     }
-//   }
-//
-//   Future<void> _initializeNotifications() async {
-//     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-//     const InitializationSettings initializationSettings = InitializationSettings(
-//       android: initializationSettingsAndroid,
-//     );
-//
-//     await _localNotificationsPlugin.initialize(initializationSettings);
-//   }
-//
-//   Future<void> _showNotification(String taskName) async {
-//     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-//       'task_deadline_channel', // Channel ID
-//       'Upcoming Deadlines', // Channel name
-//       importance: Importance.high,
-//       priority: Priority.high,
-//       showWhen: true,
-//     );
-//     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-//
-//     await _localNotificationsPlugin.show(
-//       0, // Notification ID
-//       'Task Deadline Approaching', // Notification title
-//       'The deadline for "$taskName" is in less than 3 days.', // Notification body
-//       platformChannelSpecifics,
-//     );
-//   }
-//
-//
-//
-//   void _checkForUpcomingDeadlines(List<Task> tasks) {
-//     DateTime today = DateTime.now();
-//
-//     for (var task in tasks) {
-//       if (task.deadline.difference(today).inDays <= 3 && task.deadline.isAfter(today)) {
-//         _showNotification(task.taskName);
-//       }
-//     }
-//   }
-// }

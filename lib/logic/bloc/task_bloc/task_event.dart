@@ -17,11 +17,16 @@ class AddTaskEvent extends TaskEvent {
 
 class LoadTasksEvent extends TaskEvent {
   final String? priority;
-  final DateTime? startDate;
-  final DateTime? endDate;
 
-  LoadTasksEvent({this.priority, this.startDate, this.endDate});
+
+  LoadTasksEvent({this.priority, });
 
   @override
-  List<Object> get props => [priority ?? '', startDate ?? '', endDate ?? ''];
+  List<Object> get props => [priority ?? '',];
+}
+
+class UpdateNotificationBadgeEvent extends TaskEvent {
+  final int notificationCount;
+
+  UpdateNotificationBadgeEvent(this.notificationCount);
 }
