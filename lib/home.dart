@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskmanagement/screens/calender_task_view.dart';
 import 'package:taskmanagement/screens/task_add_screen.dart';
+import 'package:taskmanagement/screens/task_list_screen.dart';
 import 'package:taskmanagement/screens/team/create_team.dart';
 import 'package:taskmanagement/screens/team_member/add_team_member_screen.dart';
 import 'logic/bloc/task_bloc/task_bloc.dart';
@@ -79,6 +80,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
               _buildNavigationCard(
                 context,
+                title: "Task List",
+                icon: Icons.list_alt,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const TaskListScreen()),
+                  );
+                },
+              ),
+              _buildNavigationCard(
+                context,
                 title: "Add Member",
                 icon: Icons.person_add_alt_1_sharp,
                 onTap: () {
@@ -88,6 +100,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   );
                 },
               ),
+
               _buildNavigationCard(
                 context,
                 title: "Create Team",

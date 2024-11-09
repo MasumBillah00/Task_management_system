@@ -1,3 +1,4 @@
+
 import 'package:equatable/equatable.dart';
 import 'package:taskmanagement/data/models/task_model.dart';
 
@@ -18,15 +19,18 @@ class AddTaskEvent extends TaskEvent {
 class LoadTasksEvent extends TaskEvent {
   final String? priority;
 
-
-  LoadTasksEvent({this.priority, });
+  LoadTasksEvent({this.priority});
 
   @override
-  List<Object> get props => [priority ?? '',];
+  List<Object> get props => [priority ?? ''];
 }
 
 class UpdateNotificationBadgeEvent extends TaskEvent {
   final int notificationCount;
 
   UpdateNotificationBadgeEvent(this.notificationCount);
+
+  @override
+  List<Object> get props => [notificationCount];
 }
+

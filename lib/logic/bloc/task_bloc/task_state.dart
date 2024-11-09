@@ -30,7 +30,11 @@ class TaskError extends TaskState {
   List<Object> get props => [message];
 }
 
-class TaskBadgeUpdated extends TaskState { // New state
+class TaskNotificationBadgeUpdated extends TaskState {
   final int notificationCount;
-  TaskBadgeUpdated(this.notificationCount);
+
+  TaskNotificationBadgeUpdated(this.notificationCount);
+
+  @override
+  List<Object> get props => [notificationCount];
 }
