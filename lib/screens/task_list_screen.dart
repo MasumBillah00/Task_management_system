@@ -1,7 +1,7 @@
-// TaskListScreen.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taskmanagement/screens/task_screen/task_details_screen.dart';
 import '../logic/bloc/task_bloc/task_bloc.dart';
 import '../logic/bloc/task_bloc/task_event.dart';
 import '../logic/bloc/task_bloc/task_state.dart';
@@ -17,6 +17,7 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen> {
   String? _selectedPriority;
   int _notificationCount = 0;
+  List<Task> _upcomingTasks = [];
 
   @override
   void initState() {
@@ -31,6 +32,72 @@ class _TaskListScreenState extends State<TaskListScreen> {
     context.read<TaskBloc>().add(LoadTasksEvent(priority: priority));
   }
 
+  // void _showNotificationDetails() {
+  //   if (_upcomingTasks.isEmpty) {
+  //     return;
+  //   }
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (context) {
+  //       return ListView.builder(
+  //         itemCount: _upcomingTasks.length,
+  //         itemBuilder: (context, index) {
+  //           final task = _upcomingTasks[index];
+  //           return Card(
+  //             margin: const EdgeInsets.all(8),
+  //             child: ListTile(
+  //               title: Text("Task: ${task.taskName}"),
+  //               subtitle: Text(
+  //                 "You have less than three days to submission",
+  //                 style: const TextStyle(color: Colors.red),
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
+  void _showNotificationDetails() {
+    if (_upcomingTasks.isEmpty) {
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ListView.builder(
+          itemCount: _upcomingTasks.length,
+          itemBuilder: (context, index) {
+            final task = _upcomingTasks[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop(); // Close the bottom sheet
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TaskDetailsScreen(task: task),
+                  ),
+                );
+              },
+              child: Card(
+                margin: const EdgeInsets.all(8),
+                child: ListTile(
+                  title: Text("Task: ${task.taskName}"),
+                  subtitle: Text(
+                    "You have less than three days to submission",
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +108,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             children: [
               IconButton(
                 icon: const Icon(Icons.notifications),
-                onPressed: () {},
+                onPressed: _notificationCount > 0 ? _showNotificationDetails : null,
               ),
               if (_notificationCount > 0)
                 Positioned(
@@ -84,6 +151,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               if (state is TaskNotificationBadgeUpdated) {
                 setState(() {
                   _notificationCount = state.notificationCount;
+                  _upcomingTasks = state.upcomingTasks;
                 });
               }
             },
@@ -115,6 +183,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       ),
     );
   }
+
   Widget _buildTaskCard(Task task) {
     return Card(
       margin: const EdgeInsets.all(8),
