@@ -1,4 +1,4 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Task {
   String id;  // Unique ID for syncing with Firestore
@@ -34,14 +34,34 @@ class Task {
     };
   }
 
-  // For Firebase serialization
+    // For Firebase serialization
+  // factory Task.fromMap(Map<String, dynamic> map) {
+  //   return Task(
+  //     id: map['id'] ?? '', // Default to empty string if null
+  //     taskName: map['taskName'] ?? '',
+  //     description: map['description'] ?? '',
+  //     priority: map['priority'] ?? '',
+  //     deadline: map['deadline'] != null ? DateTime.parse(map['deadline']) : DateTime.now(),
+  //     assignedUsers: map['assignedUsers'] is List<dynamic>
+  //         ? List<String>.from(map['assignedUsers'])
+  //         : (map['assignedUsers'] ?? '').toString().split(','),
+  //     status: map['status'] ?? '',
+  //     isSynced: map['isSynced'] == 1,
+  //   );
+  // }
+
+
+
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
       id: map['id'] ?? '', // Default to empty string if null
       taskName: map['taskName'] ?? '',
       description: map['description'] ?? '',
       priority: map['priority'] ?? '',
-      deadline: map['deadline'] != null ? DateTime.parse(map['deadline']) : DateTime.now(),
+      // Handle deadline as either a Firestore Timestamp or an ISO String
+      deadline: map['deadline'] is Timestamp
+          ? (map['deadline'] as Timestamp).toDate()
+          : DateTime.parse(map['deadline'] ?? DateTime.now().toIso8601String()),
       assignedUsers: map['assignedUsers'] is List<dynamic>
           ? List<String>.from(map['assignedUsers'])
           : (map['assignedUsers'] ?? '').toString().split(','),
@@ -50,12 +70,24 @@ class Task {
     );
   }
 
+  //
+  // Map<String, dynamic> toFirestoreMap() {
+  //   return {
+  //     'taskName': taskName,
+  //     'description': description,
+  //     'priority': priority,
+  //     'deadline': deadline.toIso8601String(),
+  //     'assignedUsers': assignedUsers,
+  //     'status': status,
+  //   };
+  // }
+
   Map<String, dynamic> toFirestoreMap() {
     return {
       'taskName': taskName,
       'description': description,
       'priority': priority,
-      'deadline': deadline.toIso8601String(),
+      'deadline': Timestamp.fromDate(deadline), // Convert to Firestore's Timestamp
       'assignedUsers': assignedUsers,
       'status': status,
     };

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taskmanagement/screens/team_member/team_member_list_screen.dart';
@@ -14,6 +15,8 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _roleController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +46,13 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
                 validator: (value) =>
                 value!.isEmpty ? "Please enter an email" : null,
               ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: "Password"),
+                obscureText: true,
+                validator: (value) =>
+                value!.isEmpty ? "Please enter a password" : null,
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => _addMember(),
@@ -64,47 +74,36 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
     );
   }
 
+
   Future<void> _addMember() async {
     if (_formKey.currentState!.validate()) {
-      TeamMember newMember = TeamMember(
-        name: _nameController.text,
-        role: _roleController.text,
-        email: _emailController.text,
-        id: '', // This should be handled by Firestore
-      );
+      try {
+        // Create Firebase Auth user
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
 
-      // Add the new member and get the generated ID
-      DocumentReference docRef = await FirebaseFirestore.instance.collection('team_members').add(newMember.toMap());
+        // Create a new TeamMember instance
+        TeamMember newMember = TeamMember(
+          id: userCredential.user!.uid,
+          name: _nameController.text,
+          role: _roleController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
 
-      // Update the member ID with the generated document ID
-      newMember.id = docRef.id; // Update with the Firestore document ID
-      await docRef.set(newMember.toMap(), SetOptions(merge: true)); // Merge to add the ID to Firestore
+        // Save member details (excluding password) in Firestore
+        await FirebaseFirestore.instance.collection('team_members').doc(newMember.id).set(newMember.toMap());
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Member added successfully")));
-      Navigator.pop(context); // Go back after adding the member
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Member added successfully")));
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Please complete the form")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please complete the form")));
     }
   }
 
-
-// Future<void> _addMember() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     TeamMember newMember = TeamMember(
-  //       name: _nameController.text,
-  //       role: _roleController.text,
-  //       email: _emailController.text,
-  //       id: '',
-  //     );
-  //     await FirebaseFirestore.instance.collection('team_members').add(newMember.toMap());
-  //     ScaffoldMessenger.of(context)
-  //         .showSnackBar(const SnackBar(content: Text("Member added successfully")));
-  //     Navigator.pop(context); // Go back after adding the member
-  //   } else {
-  //     ScaffoldMessenger.of(context)
-  //         .showSnackBar(const SnackBar(content: Text("Please complete the form")));
-  //   }
-  // }
 }

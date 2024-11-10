@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:taskmanagement/screens/calender_task_view.dart';
-import 'package:taskmanagement/screens/task_add_screen.dart';
-import 'package:taskmanagement/screens/task_list_screen.dart';
+import 'package:taskmanagement/screens/task_screen/calender_task_view.dart';
+import 'package:taskmanagement/screens/task_screen/task_add_screen.dart';
+import 'package:taskmanagement/screens/task_screen/task_list_screen.dart';
 import 'package:taskmanagement/screens/team/create_team.dart';
 import 'package:taskmanagement/screens/team_member/add_team_member_screen.dart';
-import 'logic/bloc/task_bloc/task_bloc.dart';
+import '../logic/bloc/task_bloc/task_bloc.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   @override

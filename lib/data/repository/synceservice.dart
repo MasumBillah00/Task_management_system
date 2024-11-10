@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import 'data/models/task_model.dart';
-import 'data/repository/database_helper.dart';
+import '../models/task_model.dart';
+import 'database_helper.dart';
 
 class SyncService {
   final DatabaseHelper dbHelper = DatabaseHelper();

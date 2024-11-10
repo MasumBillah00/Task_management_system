@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:taskmanagement/screens/user/update_task.dart';
 
 import '../../data/models/task_model.dart';
 
@@ -46,16 +47,29 @@ class AssignedTaskListScreen extends StatelessWidget {
                       ),
                      const SizedBox(height: 5),
                       Text(task.description),
+                      Text(task.priority,style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red.shade800,
+                      ),),
+                      Text(task.status),
+                      Text(task.assignedUsers.toString(),style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.blue.shade600,
+                      ),),
+                      Text(task.deadline.toString()),
+
                       const SizedBox(height: 10),
                       ElevatedButton(
                         child: const Text('Update Task'),
                         onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => TaskUpdatePage(task: task),
-                          //   ),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpdateTaskScreen(task: task),
+                            ),
+                          );
                         },
                       ),
                     ],

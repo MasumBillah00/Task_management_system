@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:taskmanagement/loginpage.dart';
+import 'package:taskmanagement/screens/login_registration/loginpage.dart';
 
 import 'logic/bloc/login/login_bloc.dart';
 import 'logic/bloc/task_bloc/task_bloc.dart'; // Adjust the import based on your structure
