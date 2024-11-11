@@ -33,4 +33,3 @@ class UpdateNotificationBadgeEvent extends TaskEvent {
   @override
   List<Object> get props => [notificationCount];
 }
-

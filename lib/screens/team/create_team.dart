@@ -49,35 +49,81 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
         title: const Text("Create Team"),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
             TextField(
               controller: _teamNameController,
-              decoration: const InputDecoration(labelText: "Team Name"),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _members.length,
-                itemBuilder: (context, index) {
-                  return CheckboxListTile(
-                    title: Text(_members[index]),
-                    value: _selectedMembers.contains(_members[index]),
-                    onChanged: (bool? isSelected) {
-                      setState(() {
-                        if (isSelected == true) {
-                          _selectedMembers.add(_members[index]);
-                        } else {
-                          _selectedMembers.remove(_members[index]);
-                        }
-                      });
-                    },
-                  );
-                },
+              decoration: const InputDecoration(
+                  labelText: "Team Name",
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                )
+
               ),
             ),
             const SizedBox(height: 16),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _members.length,
+              itemBuilder: (context, index) {
+                final isSelected = _selectedMembers.contains(_members[index]);
+
+                return Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 1),
+                  color: isSelected ? Colors.blue.shade50 : Colors.white,
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: isSelected ? Colors.blue : Colors.grey.shade300,
+                      child: Icon(
+                        isSelected ? Icons.check : Icons.person,
+                        color: isSelected ? Colors.white : Colors.grey.shade700,
+                      ),
+                    ),
+                    title: Text(
+                      _members[index],
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.blue.shade800 : Colors.grey.shade800,
+                      ),
+                    ),
+                    subtitle: Text(
+                      "Team Member",
+                      style: TextStyle(color: Colors.grey.shade600),
+                    ),
+                    trailing: Checkbox(
+                      activeColor: Colors.blue,
+                      value: isSelected,
+                      onChanged: (bool? isChecked) {
+                        setState(() {
+                          if (isChecked == true) {
+                            _selectedMembers.add(_members[index]);
+                          } else {
+                            _selectedMembers.remove(_members[index]);
+                          }
+                        });
+                      },
+                    ),
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          _selectedMembers.remove(_members[index]);
+                        } else {
+                          _selectedMembers.add(_members[index]);
+                        }
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _createTeam,
               child: const Text("Create Team"),

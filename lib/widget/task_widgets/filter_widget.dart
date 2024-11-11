@@ -12,15 +12,24 @@ class PriorityFilterDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: selectedPriority,
-      items: [null, 'High', 'Medium', 'Low'].map((String? priority) {
-        return DropdownMenuItem<String>(
-          value: priority,
-          child: Text(priority ?? 'All'),
-        );
-      }).toList(),
-      onChanged: onPrioritySelected,
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(8),
+        //border: Border.all(color: Colors.amber, width: 2),
+      ),
+      child: DropdownButton<String>(
+        value: selectedPriority,
+        items: [null, 'High', 'Medium', 'Low'].map((String? priority) {
+          return DropdownMenuItem<String>(
+            value: priority,
+            child: Text(priority ?? 'All'),
+          );
+        }).toList(),
+        onChanged: onPrioritySelected,
+
+      ),
     );
   }
 }
