@@ -1,208 +1,183 @@
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import '../../data/models/task_model.dart';
-// class AssignedTaskListScreen extends StatelessWidget {
-//   final String userId = FirebaseAuth.instance.currentUser!.uid;
-//
-//   Future<void> _deleteTask(BuildContext context, String taskId) async {
-//     try {
-//       await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Task deleted successfully')),
-//       );
-//     } catch (e) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text('Error deleting task: $e')),
-//       );
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("My Assigned Tasks"),
-//       ),
-//       body: StreamBuilder<QuerySnapshot>(
-//         stream: FirebaseFirestore.instance
-//             .collection('tasks')
-//             .where('assignedUsers', arrayContains: userId) // Correctly filter tasks assigned to the current user
-//             .snapshots(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return const Center(child: CircularProgressIndicator());
-//           }
-//           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-//             return const Center(child: Text("No tasks available"));
-//           }
-//
-//           List<Task> tasks = snapshot.data!.docs
-//               .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
-//               .toList();
-//
-//           return ListView.builder(
-//             itemCount: tasks.length,
-//             itemBuilder: (context, index) {
-//               final task = tasks[index];
-//               return Card(
-//                 margin: const EdgeInsets.all(8),
-//                 child: Padding(
-//                   padding: const EdgeInsets.all(12.0),
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.stretch,
-//                     children: [
-//                       Text(
-//                         task.taskName,
-//                         style: const TextStyle(
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 18,
-//                           color: Colors.blueAccent,
-//                         ),
-//                       ),
-//                       const SizedBox(height: 5),
-//                       Text(task.description),
-//                       Text(
-//                         task.priority,
-//                         style: TextStyle(
-//                           fontSize: 18,
-//                           fontWeight: FontWeight.bold,
-//                           color: Colors.red.shade800,
-//                         ),
-//                       ),
-//                       Text(task.status),
-//                       Text(
-//                         task.deadline.toString(),
-//                         style: TextStyle(
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 18,
-//                           color: Colors.blue.shade600,
-//                         ),
-//                       ),
-//                       const SizedBox(height: 10),
-//                       IconButton(
-//                         icon: const Icon(Icons.delete),
-//                         onPressed: () => _deleteTask(context, task.id),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               );
-//             },
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-//
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:taskmanagement/screens/user/update_task.dart';
 import '../../data/models/task_model.dart';
+import '../task_screen/task_list_screen.dart';
 
 class AssignedTaskListScreen extends StatelessWidget {
   final String userId = FirebaseAuth.instance.currentUser!.uid;
   final String userEmail = FirebaseAuth.instance.currentUser!.email!;
 
-  Future<void> _deleteTask(BuildContext context, String taskId) async {
+  // Fetch the user's name from Firestore
+  Future<String> _fetchUserName() async {
     try {
-      await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Task deleted successfully')),
-      );
+      DocumentSnapshot doc = await FirebaseFirestore.instance.collection('team_members').doc(userId).get();
+      return doc['name'] ?? 'User';
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error deleting task: $e')),
-      );
+      print("Error fetching user name: $e");
+      return 'User';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("My Assigned Tasks"),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('tasks')
-            .where('assignedUsers', arrayContains: userId) // Correctly filter tasks assigned to the current user
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No tasks available"));
-          }
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("My Profile"),
+          centerTitle: true,
+          backgroundColor: Colors.black.withOpacity(.1),
+        ),
+        body: FutureBuilder<String>(
+          future: _fetchUserName(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final userName = snapshot.data ?? 'User';
 
-          List<Task> tasks = snapshot.data!.docs
-              .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
-              .toList();
+            return StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('tasks')
+                  .where('assignedUsers', arrayContains: userId)
+                  .snapshots(),
+              builder: (context, taskSnapshot) {
+                if (taskSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (!taskSnapshot.hasData || taskSnapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No tasks available"));
+                }
 
-          return ListView.builder(
-            itemCount: tasks.length,
-            itemBuilder: (context, index) {
-              final task = tasks[index];
-              return Card(
-                margin: const EdgeInsets.all(8),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Welcome message and user email
-                      Text(
-                        "Welcome Back, $userEmail",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        task.taskName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.blueAccent,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(task.description),
-                      Text(
-                        task.priority,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red.shade800,
-                        ),
-                      ),
-                      Text(task.status),
-                      Text(
-                        task.deadline.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.blue.shade600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
+                List<Task> tasks = taskSnapshot.data!.docs
+                    .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
+                    .toList();
 
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
+                return ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    // Display user profile section only once at the top
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const TaskListScreen()),
+                            ),
+                            child:  Text("View Task List",
+                              style: TextStyle(
+                                color: Colors.blue.shade800,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.blue.shade800,
+                              ),),
+                          ),
+                        ),
+                        //const SizedBox(height: 00,),
+                        const Text(
+                          "Hello,",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Mr. $userName",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          userEmail,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'These tasks are assigned to you. Best of luck!',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                    // Build the task cards
+                    ...tasks.map((task) => Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              task.taskName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(task.description),
+                            Text(
+                              task.priority,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red.shade800,
+                              ),
+                            ),
+                            Text(task.status),
+                            Text(
+                              task.deadline.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.blue.shade600,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UpdateTaskScreen(task: task),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Update Task',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
+
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
 }
-
-
-

@@ -23,97 +23,99 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(title: const Text("Add Team Member")),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
 
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                      labelText: "Name",
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:BorderRadius.all(Radius.circular(10))
-
-                    )
-                  ),
-                  validator: (value) => value!.isEmpty ? "Please enter a name" : null,
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _roleController,
-                  decoration: const InputDecoration(
-                    labelText: "Role",
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                        labelText: "Name",
                       enabledBorder: OutlineInputBorder(
-                          borderRadius:BorderRadius.all(Radius.circular(10))
+                        borderRadius:BorderRadius.all(Radius.circular(10))
 
                       )
+                    ),
+                    validator: (value) => value!.isEmpty ? "Please enter a name" : null,
                   ),
-                  validator: (value) => value!.isEmpty ? "Please enter a role" : null,
-                ),
-               const SizedBox(height: 10),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                      labelText: "Email",
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius:BorderRadius.all(Radius.circular(10))
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _roleController,
+                    decoration: const InputDecoration(
+                      labelText: "Role",
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius:BorderRadius.all(Radius.circular(10))
 
-                      )),
-                  validator: (value) => value!.isEmpty ? "Please enter an email" : null,
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                      labelText: "Password",
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius:BorderRadius.all(Radius.circular(10))
-
-                      )
+                        )
+                    ),
+                    validator: (value) => value!.isEmpty ? "Please enter a role" : null,
                   ),
-                  obscureText: true,
-                  validator: (value) => value!.isEmpty ? "Please enter a password" : null,
-                ),
-                const SizedBox(height: 20),
+                 const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                        labelText: "Email",
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius:BorderRadius.all(Radius.circular(10))
 
-                ElevatedButton(
-                  onPressed: _addMember,
-                    style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue
-                ),
-                  child: const Text("Add Member",style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),),
-
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MemberListScreen()),
-                    );
-                  },
-                  style: TextButton.styleFrom(
-
+                        )),
+                    validator: (value) => value!.isEmpty ? "Please enter an email" : null,
                   ),
-                  child:  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text("Team Member",style: TextStyle(
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: const InputDecoration(
+                        labelText: "Password",
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius:BorderRadius.all(Radius.circular(10))
+
+                        )
+                    ),
+                    obscureText: true,
+                    validator: (value) => value!.isEmpty ? "Please enter a password" : null,
+                  ),
+                  const SizedBox(height: 20),
+
+                  ElevatedButton(
+                    onPressed: _addMember,
+                      style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue
+                  ),
+                    child: const Text("Add Member",style: TextStyle(
+                      color: Colors.white,
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.blue.shade900,
+                    ),),
 
-                      decoration: TextDecoration.underline
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MemberListScreen()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
 
                     ),
+                    child:  Align(
+                      alignment: Alignment.centerRight,
+                      child: Text("Team Member",style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.blue.shade900,
+
+                        decoration: TextDecoration.underline
+
+                      ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

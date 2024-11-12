@@ -33,3 +33,8 @@ class UpdateNotificationBadgeEvent extends TaskEvent {
   @override
   List<Object> get props => [notificationCount];
 }
+class LoadTasksByMemberEvent extends TaskEvent {
+  final String teamMemberName;
+
+  LoadTasksByMemberEvent(this.teamMemberName);
+}

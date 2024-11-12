@@ -12,33 +12,37 @@ class NotificationIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        IconButton(
-          icon:  Icon(Icons.notifications,
-            size: 30,
-            color: Colors.blue.shade800,
+    return Padding(
+      padding: const EdgeInsets.only(right:12.0),
+      child: Stack(
+        children: [
+          IconButton(
+            hoverColor: Colors.blueGrey,
+            icon:  Icon(Icons.notifications,
+              size: 45,
+              color: Colors.blue.shade800,
 
+            ),
+            onPressed: onPressed,
           ),
-          onPressed: onPressed,
-        ),
-        if (notificationCount > 0)
-          Positioned(
-            right: 6,
-            top: 6,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                '$notificationCount',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+          if (notificationCount > 0)
+            Positioned(
+              right: 12,
+              top: 6,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '$notificationCount',
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

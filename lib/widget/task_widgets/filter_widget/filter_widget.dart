@@ -13,8 +13,10 @@ class PriorityFilterDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 40,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
+
         color: Colors.blue.shade50,
         borderRadius: BorderRadius.circular(8),
         //border: Border.all(color: Colors.amber, width: 2),

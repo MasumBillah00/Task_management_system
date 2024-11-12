@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+import 'package:taskmanagement/screens/task_screen/task_details_screen.dart';
 import '../../data/models/task_model.dart';
 
 class CalendarTaskViewScreen extends StatefulWidget {
@@ -54,7 +54,11 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
         title: const Text("Task Calendar"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.view_agenda),
+
+            icon: Image.asset('assets/icon/weekdays.png',
+              width:25 ,
+              height: 25,
+            ),
             onPressed: () {
               setState(() {
                 _calendarFormat = CalendarFormat.week;
@@ -62,7 +66,7 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.calendar_month_outlined,size: 20,),
+            icon: const Icon(Icons.calendar_month_outlined,size: 25,),
             onPressed: () {
               setState(() {
                 _calendarFormat = CalendarFormat.month;
@@ -125,9 +129,27 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
       itemCount: tasks.length,
       itemBuilder: (context, index) {
         final task = tasks[index];
-        return ListTile(
-          title: Text(task.taskName),
-          subtitle: Text("Priority: ${task.priority} | Status: ${task.status}"),
+        return GestureDetector(
+          onTap:() {
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TaskDetailsScreen(task: task),
+              ),
+            );
+
+          },
+
+          child: Card(
+            color: Colors.white.withOpacity(0.9),
+
+            child: ListTile(
+
+              title: Text(task.taskName),
+              subtitle: Text("Priority: ${task.priority} | Status: ${task.status}"),
+            ),
+          ),
         );
       },
     );

@@ -48,13 +48,44 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         emit(TaskError("Failed to add task"));
       }
     });
+    on<LoadTasksByMemberEvent>((event, emit) async {
+      emit(TaskLoading());
+
+      try {
+        // Fetch the UID of the team member from Firestore based on the name
+        String? memberId = await _getMemberIdByName(event.teamMemberName);
+
+        // Fetch tasks assigned to this member
+        List<Task> tasks = await _fetchTasksFromFirebase(assignedUserId: memberId);
+
+        emit(TaskLoaded(tasks));
+      } catch (e) {
+        emit(TaskError("Failed to load tasks for team member"));
+      }
+    });
   }
 
-  Future<List<Task>> _fetchTasksFromFirebase({String? priority}) async {
+  Future<String?> _getMemberIdByName(String name) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('team_members')
+        .where('name', isEqualTo: name)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      return snapshot.docs.first.id; // Return UID
+    }
+    return null;
+  }
+
+  Future<List<Task>> _fetchTasksFromFirebase({String? priority, String? assignedUserId}) async {
     Query query = FirebaseFirestore.instance.collection('tasks');
 
     if (priority != null && priority.isNotEmpty) {
       query = query.where('priority', isEqualTo: priority);
+    }
+
+    if (assignedUserId != null && assignedUserId.isNotEmpty) {
+      query = query.where('assignedUsers', arrayContains: assignedUserId);
     }
 
     QuerySnapshot snapshot = await query.get();
@@ -62,6 +93,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
   }
+
+  // Future<List<Task>> _fetchTasksFromFirebase({String? priority}) async {
+  //   Query query = FirebaseFirestore.instance.collection('tasks');
+  //
+  //   if (priority != null && priority.isNotEmpty) {
+  //     query = query.where('priority', isEqualTo: priority);
+  //   }
+  //
+  //   QuerySnapshot snapshot = await query.get();
+  //   return snapshot.docs
+  //       .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>))
+  //       .toList();
+  // }
 
   List<Task> _getUpcomingTasks(List<Task> tasks) {
     final now = DateTime.now();
