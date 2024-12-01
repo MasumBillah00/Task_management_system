@@ -126,4 +126,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       throw Exception("Failed to add task");
     }
   }
+  Stream<List<Task>> getUserTasks(String uid) {
+    return FirebaseFirestore.instance
+        .collection('tasks')
+        .where('assignedTo', isEqualTo: uid)
+        .snapshots()
+        .map((snapshot) =>
+        snapshot.docs.map((doc) => Task.fromMap(doc.data())).toList());
+  }
+
 }

@@ -9,15 +9,22 @@ class AssignedTaskListScreen extends StatelessWidget {
   final String userId = FirebaseAuth.instance.currentUser!.uid;
   final String userEmail = FirebaseAuth.instance.currentUser!.email!;
 
-  // Fetch the user's name from Firestore
   Future<String> _fetchUserName() async {
     try {
-      DocumentSnapshot doc = await FirebaseFirestore.instance.collection('team_members').doc(userId).get();
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('team_members')
+          .doc(userId)
+          .get();
       return doc['name'] ?? 'User';
     } catch (e) {
       print("Error fetching user name: $e");
       return 'User';
     }
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacementNamed('/login'); // Assuming '/login' is your login route
   }
 
   @override
@@ -28,6 +35,36 @@ class AssignedTaskListScreen extends StatelessWidget {
           title: const Text("My Profile"),
           centerTitle: true,
           backgroundColor: Colors.black.withOpacity(.1),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade900,
+                ),
+                child: const Text(
+                  'Menu',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.home),
+                title: const Text('Home'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
+                onTap: () => _logout(context),
+              ),
+            ],
+          ),
         ),
         body: FutureBuilder<String>(
           future: _fetchUserName(),
@@ -57,7 +94,6 @@ class AssignedTaskListScreen extends StatelessWidget {
                 return ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    // Display user profile section only once at the top
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -66,17 +102,19 @@ class AssignedTaskListScreen extends StatelessWidget {
                           child: TextButton(
                             onPressed: () => Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const TaskListScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => const TaskListScreen()),
                             ),
-                            child:  Text("View Task List",
+                            child: Text(
+                              "View Task List",
                               style: TextStyle(
                                 color: Colors.blue.shade800,
                                 decoration: TextDecoration.underline,
                                 decorationColor: Colors.blue.shade800,
-                              ),),
+                              ),
+                            ),
                           ),
                         ),
-                        //const SizedBox(height: 00,),
                         const Text(
                           "Hello,",
                           style: TextStyle(
@@ -111,7 +149,6 @@ class AssignedTaskListScreen extends StatelessWidget {
                         const SizedBox(height: 20),
                       ],
                     ),
-                    // Build the task cards
                     ...tasks.map((task) => Card(
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       child: Padding(
@@ -155,7 +192,8 @@ class AssignedTaskListScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UpdateTaskScreen(task: task),
+                                    builder: (context) =>
+                                        UpdateTaskScreen(task: task),
                                   ),
                                 );
                               },
@@ -170,7 +208,6 @@ class AssignedTaskListScreen extends StatelessWidget {
                         ),
                       ),
                     )),
-
                   ],
                 );
               },

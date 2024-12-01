@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskmanagement/screens/task_screen/calender_task_view.dart';
@@ -6,6 +7,7 @@ import 'package:taskmanagement/screens/task_screen/task_list_screen.dart';
 import 'package:taskmanagement/screens/team/create_team.dart';
 import 'package:taskmanagement/screens/team_member/add_team_member_screen.dart';
 import '../logic/bloc/task_bloc/task_bloc.dart';
+import 'login_registration/loginpage.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   @override
@@ -17,6 +19,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   // Define the pages for each bottom navigation tab
   final List<Widget> _pages = [
+    // Home (Dashboard) view
+    AdminHomeScreen(),
     TaskAddScreen(),
     MemberAddScreen(),
     CreateTeamScreen(),
@@ -24,17 +28,16 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   ];
 
   void _onItemTapped(int index) {
-    if (index == 0) {
-      // For "Home", keep showing the current GridView
-      setState(() {
-        _selectedIndex = index;
-      });
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => _pages[index]),
-      );
-    }
+    setState(() {
+      _selectedIndex = index;
+    });
+    // Navigate to the selected page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => _pages[index],
+      ),
+    );
   }
 
   @override
@@ -100,7 +103,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   );
                 },
               ),
-
               _buildNavigationCard(
                 context,
                 title: "Create Team",
@@ -127,28 +129,27 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             ],
           ),
         ),
-
         // Bottom Navigation Bar to switch screens
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home,size: 25,),
+              icon: Icon(Icons.home, size: 25),
               label: "Home",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_task,size: 25,),
+              icon: Icon(Icons.add_task, size: 25),
               label: "Add Task",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_add,size: 25,),
+              icon: Icon(Icons.person_add, size: 25),
               label: "Add Member",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.group_add,size: 25,),
+              icon: Icon(Icons.group_add, size: 25),
               label: "Create Team",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today,size: 25,),
+              icon: Icon(Icons.calendar_today, size: 25),
               label: "Date View",
             ),
           ],
@@ -208,16 +209,26 @@ class Custom_Drawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        children: const [
-          DrawerHeader(child: Text('TMS')),
-          ListTile(
+        children: [
+          const DrawerHeader(child: Text('TMS')),
+          const ListTile(
             title: Text('Item1'),
           ),
-          ListTile(
+          const ListTile(
             title: Text('Item2'),
           ),
-          ListTile(
+          const ListTile(
             title: Text('Item3'),
+          ),
+          ListTile(
+            title:  const Text('Logout', style: TextStyle(color: Colors.red)),
+            leading:  const Icon(Icons.logout, color: Colors.red),
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
           ),
         ],
       ),
