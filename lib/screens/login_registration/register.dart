@@ -30,7 +30,7 @@ class RegisterState extends State<Register> {
   File? file;
   var options = [
     'User',
-    'Admin',
+    'Teacher',
   ];
   var _currentItemSelected = "User";
   var role = "User";

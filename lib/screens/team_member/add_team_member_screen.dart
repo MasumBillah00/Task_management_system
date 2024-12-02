@@ -156,45 +156,5 @@ class _MemberAddScreenState extends State<MemberAddScreen> {
     }
   }
 
-
-// Future<void> _addMember() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     try {
-  //       // Create Firebase Auth user for the member
-  //       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //         email: _emailController.text,
-  //         password: _passwordController.text,
-  //       );
-  //
-  //       // Create a new TeamMember instance with "user" role
-  //       TeamMember newMember = TeamMember(
-  //         id: userCredential.user!.uid,
-  //         name: _nameController.text,
-  //         role: "user",
-  //         email: _emailController.text,
-  //       );
-  //
-  //       // Save member details in Firestore (excluding password)
-  //       await FirebaseFirestore.instance
-  //           .collection('team_members')
-  //           .doc(newMember.id)
-  //           .set(newMember.toMap());
-  //
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text("Member added successfully")),
-  //       );
-  //       Navigator.pop(context);
-  //     } catch (e) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text("Error: $e")),
-  //       );
-  //     }
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("Please complete the form")),
-  //     );
-  //   }
-  // }
-
 }
 

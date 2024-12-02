@@ -36,15 +36,40 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
   }
 
 
+  // Future<void> fetchTeamMembers() async {
+  //   final snapshot = await FirebaseFirestore.instance.collection('team_members').get();
+  //   final Map<String, String> membersMap = {
+  //     for (var doc in snapshot.docs) doc['name'] as String: doc.id as String,
+  //   };
+  //   setState(() {
+  //     teamMembers = membersMap;
+  //   });
+  // }
+
   Future<void> fetchTeamMembers() async {
-    final snapshot = await FirebaseFirestore.instance.collection('team_members').get();
-    final Map<String, String> membersMap = {
-      for (var doc in snapshot.docs) doc['name'] as String: doc.id as String,
-    };
-    setState(() {
-      teamMembers = membersMap;
-    });
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('users').get();
+      if (snapshot.docs.isNotEmpty) {
+        final Map<String, String> membersMap = {
+          for (var doc in snapshot.docs) doc['name']: doc.id, // Name as key, ID as value
+        };
+        setState(() {
+          teamMembers = membersMap;
+        });
+      } else {
+        print("No team members found.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("No team members available to fetch.")),
+        );
+      }
+    } catch (e) {
+      print("Error fetching team members: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching team members: $e")),
+      );
+    }
   }
+
 
 
   void _addTask() {
@@ -133,6 +158,23 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                 onChanged: (value) => setState(() => _status = value!),
               ),
               const SizedBox(height: 10),
+              // DropdownButton<String>(
+              //   value: _selectedTeamMember,
+              //   onChanged: (id) {
+              //     setState(() {
+              //       _selectedTeamMember = id;
+              //       _assignedUsers = id != null ? [id] : [];
+              //     });
+              //   },
+              //   hint: const Text("Select Team Member"),
+              //   items: teamMembers.entries.map((entry) {
+              //     return DropdownMenuItem<String>(
+              //       value: entry.value,
+              //       child: Text(entry.key),
+              //     );
+              //   }).toList(),
+              // ),
+
               DropdownButton<String>(
                 value: _selectedTeamMember,
                 onChanged: (id) {
@@ -144,11 +186,12 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                 hint: const Text("Select Team Member"),
                 items: teamMembers.entries.map((entry) {
                   return DropdownMenuItem<String>(
-                    value: entry.value,
-                    child: Text(entry.key),
+                    value: entry.value, // UID of the team member
+                    child: Text(entry.key), // Name of the team member
                   );
                 }).toList(),
               ),
+
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _addTask,
