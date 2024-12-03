@@ -147,39 +147,20 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                 onChanged: (value) => setState(() => _status = value!),
               ),
               const SizedBox(height: 10),
-              // DropdownButton<String>(
-              //   value: _selectedTeamMember,
-              //   onChanged: (id) {
-              //     setState(() {
-              //       _selectedTeamMember = id;
-              //       _assignedUsers = id != null ? [id] : [];
-              //     });
-              //   },
-              //   hint: const Text("Select Team Member"),
-              //   items: teamMembers.entries.map((entry) {
-              //     return DropdownMenuItem<String>(
-              //       value: entry.value,
-              //       child: Text(entry.key),
-              //     );
-              //   }).toList(),
-              // ),
-
-              DropdownButton<String>(
-                value: _selectedTeamMember,
+              TeamMemberDropdown(
+                label: "Assign to",
+                selectedTeamMember: _selectedTeamMember,
+                teamMembers: teamMembers,
                 onChanged: (id) {
                   setState(() {
                     _selectedTeamMember = id;
                     _assignedUsers = id != null ? [id] : [];
                   });
                 },
-                hint: const Text("Select Team Member"),
-                items: teamMembers.entries.map((entry) {
-                  return DropdownMenuItem<String>(
-                    value: entry.value, // UID of the team member
-                    child: Text(entry.key), // Name of the team member
-                  );
-                }).toList(),
               ),
+
+
+
 
               const SizedBox(height: 10),
               ElevatedButton(

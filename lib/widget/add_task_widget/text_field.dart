@@ -16,7 +16,11 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
+      decoration: InputDecoration(
+          labelText: label, border: OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+
+      ),
       validator: validatorMessage != null ? (value) => value!.isEmpty ? validatorMessage : null : null,
     );
   }
