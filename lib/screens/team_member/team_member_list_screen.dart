@@ -21,7 +21,11 @@ class MemberListScreen extends StatelessWidget {
           }
           List<TeamMember> members = snapshot.data!.docs
               .map((doc) => TeamMember.fromMap(doc.data() as Map<String, dynamic>))
+              .where((member) => member.role != 'Teacher')
               .toList();
+          if (members.isEmpty) {
+            return const Center(child: Text("No team members available"));
+          }
 
           return ListView.builder(
             itemCount: members.length,

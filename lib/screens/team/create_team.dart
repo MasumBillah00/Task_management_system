@@ -19,8 +19,9 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   }
 
   Future<void> _fetchTeamMembers() async {
-    // Fetch existing team members from Firestore
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('team_members').get();
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('users')
+        .where('role', isNotEqualTo: 'Teacher')
+        .get();
     setState(() {
       _members = snapshot.docs.map((doc) => doc['name'] as String).toList();
     });

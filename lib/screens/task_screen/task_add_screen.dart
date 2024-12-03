@@ -35,20 +35,10 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
     fetchTeamMembers(); // Fetch team members on init
   }
 
-
-  // Future<void> fetchTeamMembers() async {
-  //   final snapshot = await FirebaseFirestore.instance.collection('team_members').get();
-  //   final Map<String, String> membersMap = {
-  //     for (var doc in snapshot.docs) doc['name'] as String: doc.id as String,
-  //   };
-  //   setState(() {
-  //     teamMembers = membersMap;
-  //   });
-  // }
-
   Future<void> fetchTeamMembers() async {
     try {
-      final snapshot = await FirebaseFirestore.instance.collection('users').get();
+      final snapshot = await FirebaseFirestore.instance.collection('users')
+          .where('role', isNotEqualTo: 'Teacher').get();
       if (snapshot.docs.isNotEmpty) {
         final Map<String, String> membersMap = {
           for (var doc in snapshot.docs) doc['name']: doc.id, // Name as key, ID as value
@@ -89,15 +79,14 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
         'description': newTask.description,
         'priority': newTask.priority,
         'deadline': newTask.deadline,
-        'assignedUsers': newTask.assignedUsers, // Ensure this field is added
+        'assignedUsers': newTask.assignedUsers,
         'status': newTask.status,
       }).then((docRef) {
-        // Once the task is added, update the task's document with the ID
         docRef.update({'id': docRef.id});
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Task added successfully")),
         );
-        Navigator.pop(context); // Go back after adding the task
+        Navigator.pop(context);
       }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error adding task: $e')),

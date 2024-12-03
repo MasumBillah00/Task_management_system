@@ -32,14 +32,24 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
 
   Future<void> _fetchTeamMembers() async {
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('team_members').get();
+      // Query Firestore for users excluding those with the role 'Teacher'
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isNotEqualTo: 'Teacher') // Filter out "Teacher" roles
+          .get();
+
+      // Extract team member names for the dropdown
       setState(() {
         _teamMembers = snapshot.docs.map((doc) => doc['name'] as String).toList();
       });
     } catch (e) {
       print("Error fetching team members: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching team members: $e")),
+      );
     }
   }
+
 
   Future<void> _updateTask() async {
     try {

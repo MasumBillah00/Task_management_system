@@ -24,6 +24,12 @@ class TaskCard extends StatelessWidget {
             _buildDetailRow("Priority", task.priority, isPriority: true),
             _buildDetailRow("Deadline", task.deadline.toLocal().toString().split(' ')[0], isDeadline: true),
             _buildDetailRow("Status", task.status),
+            // _buildDetailRow(
+            //   "Assigned Users",
+            //   task.assignedUsers.isNotEmpty
+            //       ? task.assignedUsers.join(", ") // Display user names
+            //       : "None",
+            // ),
           ],
         ),
       ),

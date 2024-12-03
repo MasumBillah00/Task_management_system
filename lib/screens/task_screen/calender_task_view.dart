@@ -18,6 +18,7 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedDay = DateTime.now();
     _fetchTaskDates(); // Fetch dates with tasks on initialization
   }
 
@@ -115,9 +116,9 @@ class _CalendarTaskViewScreenState extends State<CalendarTaskViewScreen> {
 
   Widget _buildTaskListForSelectedDate() {
     DateTime selectedDate = DateTime(
-      _selectedDay!.year,
-      _selectedDay!.month,
-      _selectedDay!.day,
+      _selectedDay?.year ?? DateTime.now().year,
+      _selectedDay?.month ?? DateTime.now().month,
+      _selectedDay?.day ?? DateTime.now().day,
     );
 
     if (_tasksByDate[selectedDate] == null || _tasksByDate[selectedDate]!.isEmpty) {
