@@ -29,7 +29,7 @@ class CustomDropdownField extends StatelessWidget {
         return DropdownMenuItem(
           value: item,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+            padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 0),
             child: Text(item),
           ),
         );

@@ -8,9 +8,10 @@ import 'package:taskmanagement/logic/bloc/task_bloc/task_event.dart';
 import 'package:taskmanagement/screens/task_screen/task_list_screen.dart';
 import '../../data/models/task_model.dart';
 import '../../logic/bloc/task_bloc/task_state.dart';
-import '../../widget/add_task_widget/deadline_picker.dart';
-import '../../widget/add_task_widget/dropdown-field.dart';
-import '../../widget/add_task_widget/text_field.dart';
+import '../../widget/component/button_style.dart';
+import '../../widget/component/deadline_picker.dart';
+import '../../widget/component/dropdown-field.dart';
+import '../../widget/component/text_field.dart';
 
 class TaskAddScreen extends StatefulWidget {
   @override
@@ -111,70 +112,73 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
           );
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Add Task", style: TextStyle(color: Colors.blue.shade900, fontSize: 30)),
-        ),
-        body: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              CustomTextField(
-                label: "Task Name",
-                controller: _taskNameController,
-                validatorMessage: "Please enter a task name",
-              ),
-              const SizedBox(height: 10),
-              CustomTextField(label: "Description", controller: _descriptionController),
-              const SizedBox(height: 10),
-              CustomDropdownField(
-                label: "Priority",
-                value: _priority,
-                items: ['Low', 'Medium', 'High'],
-                onChanged: (value) => setState(() => _priority = value!),
-              ),
-              const SizedBox(height: 10),
-              DeadlinePicker(
-                selectedDeadline: _deadline,
-                onDeadlineSelected: (pickedDate) => setState(() => _deadline = pickedDate),
-              ),
-              const SizedBox(height: 10),
-              CustomDropdownField(
-                label: "Status",
-                value: _status,
-                items: ['Not Started', 'In Progress', 'Completed'],
-                onChanged: (value) => setState(() => _status = value!),
-              ),
-              const SizedBox(height: 10),
-              TeamMemberDropdown(
-                label: "Assign to",
-                selectedTeamMember: _selectedTeamMember,
-                teamMembers: teamMembers,
-                onChanged: (id) {
-                  setState(() {
-                    _selectedTeamMember = id;
-                    _assignedUsers = id != null ? [id] : [];
-                  });
-                },
-              ),
-
-
-
-
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _addTask,
-                child: const Text("Add Task", style: TextStyle(color: Colors.black)),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TaskListScreen()),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Add Task", style: TextStyle(color: Colors.blue.shade900, fontSize: 30)),
+          ),
+          body: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                CustomTextField(
+                  label: "Task Name",
+                  controller: _taskNameController,
+                  validatorMessage: "Please enter a task name",
                 ),
-                child: const Text("View Task List"),
-              ),
-            ],
+                const SizedBox(height: 10),
+                CustomTextField(label: "Description", controller: _descriptionController),
+                const SizedBox(height: 10),
+                CustomDropdownField(
+                  label: "Priority",
+                  value: _priority,
+                  items: ['Low', 'Medium', 'High'],
+                  onChanged: (value) => setState(() => _priority = value!),
+                ),
+                const SizedBox(height: 10),
+                DeadlinePicker(
+                  selectedDeadline: _deadline,
+                  onDeadlineSelected: (pickedDate) => setState(() => _deadline = pickedDate),
+                ),
+                const SizedBox(height: 10),
+                CustomDropdownField(
+                  label: "Status",
+                  value: _status,
+                  items: ['Not Started', 'In Progress', 'Completed'],
+                  onChanged: (value) => setState(() => _status = value!),
+                ),
+                const SizedBox(height: 10),
+                TeamMemberDropdown(
+                  label: "Assign to",
+                  selectedTeamMember: _selectedTeamMember,
+                  teamMembers: teamMembers,
+                  onChanged: (id) {
+                    setState(() {
+                      _selectedTeamMember = id;
+                      _assignedUsers = id != null ? [id] : [];
+                    });
+                  },
+                ),
+
+
+
+
+                const SizedBox(height: 10),
+                GorgeousButton(
+                  label: "Add Task",
+                  onPressed: _addTask,
+                ),
+                const SizedBox(height: 8), // Add some space between buttons
+                GorgeousButton(
+                  label: "View Task List",
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const TaskListScreen()),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

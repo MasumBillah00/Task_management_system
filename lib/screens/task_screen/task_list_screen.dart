@@ -20,74 +20,75 @@ class TaskListScreen extends StatelessWidget {
       create: (_) => TaskListProvider(context),
       child: Consumer<TaskListProvider>(
         builder: (context, provider, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text("Task List"),
-              centerTitle: true,
-              actions: [
-                NotificationIcon(
-                  notificationCount: provider.notificationCount,
-                  onPressed: provider.notificationCount > 0
-                      ? () => _showNotificationDetails(context, provider)
-                      : null,
-                ),
-              ],
-            ),
-            body: Column(
-              children: [
-                // Filters placed just below the app bar
-                Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      PriorityFilterDropdown(
-                        selectedPriority: provider.selectedPriority,
-                        onPrioritySelected: (priority) =>
-                            provider.applyPriorityFilter(context, priority),
-                      ),
-                      const SizedBox(width: 10),
-                      const TeamMemberFilterPage(), // Separate page for team member filter
-                    ],
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text("Task List"),
+                centerTitle: true,
+                actions: [
+                  NotificationIcon(
+                    notificationCount: provider.notificationCount,
+                    onPressed: provider.notificationCount > 0
+                        ? () => _showNotificationDetails(context, provider)
+                        : null,
                   ),
-                ),
-                Expanded(
-                  child: MultiBlocListener(
-                    listeners: [
-                      BlocListener<TaskBloc, TaskState>(
-                        listener: (context, state) {
-                          if (state is TaskNotificationBadgeUpdated) {
-                            provider.updateNotifications(state);
-                          }
-                        },
-                      ),
-                    ],
-                    child: BlocBuilder<TaskBloc, TaskState>(
-                      builder: (context, state) {
-                        if (state is TaskLoading) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-                        if (state is TaskError) {
-                          return Center(child: Text(state.message));
-                        }
-                        if (state is TaskLoaded) {
-                          if (state.tasks.isEmpty) {
-                            return const Center(child: Text("No tasks available for this priority."));
-                          }
-                          return ListView.builder(
-                            itemCount: state.tasks.length,
-                            itemBuilder: (context, index) {
-                              final task = state.tasks[index];
-                              return TaskCard(task: task);
-                            },
-                          );
-                        }
-                        return const Center(child: Text("No tasks available"));
-                      },
+                ],
+              ),
+              body: Column(
+                children: [
+                  // Filters placed just below the app bar
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        PriorityFilterDropdown(
+                          selectedPriority: provider.selectedPriority,
+                          onPrioritySelected: (priority) =>
+                              provider.applyPriorityFilter(context, priority),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: MultiBlocListener(
+                      listeners: [
+                        BlocListener<TaskBloc, TaskState>(
+                          listener: (context, state) {
+                            if (state is TaskNotificationBadgeUpdated) {
+                              provider.updateNotifications(state);
+                            }
+                          },
+                        ),
+                      ],
+                      child: BlocBuilder<TaskBloc, TaskState>(
+                        builder: (context, state) {
+                          if (state is TaskLoading) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          if (state is TaskError) {
+                            return Center(child: Text(state.message));
+                          }
+                          if (state is TaskLoaded) {
+                            if (state.tasks.isEmpty) {
+                              return const Center(child: Text("No tasks available for this priority."));
+                            }
+                            return ListView.builder(
+                              itemCount: state.tasks.length,
+                              itemBuilder: (context, index) {
+                                final task = state.tasks[index];
+                                return TaskCard(task: task);
+                              },
+                            );
+                          }
+                          return const Center(child: Text("No tasks available"));
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },

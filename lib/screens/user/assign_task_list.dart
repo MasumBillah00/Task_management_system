@@ -322,19 +322,43 @@ class AssignedTaskListScreen extends StatelessWidget {
                       children: [
                         Align(
                           alignment: Alignment.centerRight,
+                          //child:
+                          // TextButton(
+                          //   onPressed: () =>
+                          //       Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) => const TaskListScreen()),
+                          //       ),
+                          //   child: Text(
+                          //     "Available Task",
+                          //     style: TextStyle(
+                          //       color: Colors.blue.shade800,
+                          //       decoration: TextDecoration.underline,
+                          //       decorationColor: Colors.blue.shade800,
+                          //     ),
+                          //   ),
+                          // ),
+
                           child: TextButton(
-                            onPressed: () =>
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const TaskListScreen()),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const TaskListScreen()),
+                              );
+                            },
+                            child: Container(
+                              // padding: const EdgeInsets.only(bottom: 0), // Space between text and line
+                              decoration: const BoxDecoration(
+                                border: Border(bottom: BorderSide(color: Colors.blue, width: 3)), // Bottom border
+                              ),
+                              child: const Text(
+                                "Available Task",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18,
                                 ),
-                            child: Text(
-                              "Available Task",
-                              style: TextStyle(
-                                color: Colors.blue.shade800,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.blue.shade800,
                               ),
                             ),
                           ),
@@ -375,10 +399,13 @@ class AssignedTaskListScreen extends StatelessWidget {
                     ),
                     if (tasks.isEmpty)
                       const Center(
-                        child: Text(
-                          "Oops!\n No tasks available for you at this moment.",
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                          textAlign: TextAlign.center,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 20.0),
+                          child: Text(
+                            "Oops!\n No tasks available for you at this moment.",
+                            style: TextStyle(fontSize: 16, color: Colors.black54),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       )
                     else

@@ -6,53 +6,55 @@ class ViewTeamsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Teams"),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('teams').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No teams available"));
-          }
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Teams"),
+        ),
+        body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('teams').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text("No teams available"));
+            }
 
-          List<Map<String, dynamic>> teams = snapshot.data!.docs.map((doc) {
-            return {
-              'teamName': doc['teamName'],
-              'members': List<String>.from(doc['members']),
-            };
-          }).toList();
+            List<Map<String, dynamic>> teams = snapshot.data!.docs.map((doc) {
+              return {
+                'teamName': doc['teamName'],
+                'members': List<String>.from(doc['members']),
+              };
+            }).toList();
 
-          return ListView.builder(
-            itemCount: teams.length,
-            itemBuilder: (context, index) {
-              return Card(
-                margin: const EdgeInsets.all(8),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        "Team Name: ${teams[index]['teamName']}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+            return ListView.builder(
+              itemCount: teams.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: const EdgeInsets.all(8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          "Team Name: ${teams[index]['teamName']}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text("Members:"),
-                      for (var member in teams[index]['members']) Text(member),
-                    ],
+                        const SizedBox(height: 8),
+                        const Text("Members:"),
+                        for (var member in teams[index]['members']) Text(member),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
