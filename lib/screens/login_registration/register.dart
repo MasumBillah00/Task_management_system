@@ -313,6 +313,8 @@ class Register extends StatefulWidget {
 }
 
 class RegisterState extends State<Register> {
+  FocusNode _focusNode = FocusNode();
+  EdgeInsetsGeometry _padding = const EdgeInsets.all(16);
   bool showProgress = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -328,181 +330,23 @@ class RegisterState extends State<Register> {
   var _currentItemSelected = "User";
   var role = "User";
 
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() {
+        if (_focusNode.hasFocus) {
+          _padding = const EdgeInsets.all(2); // Increase padding on focus
+        } else {
+          _padding = const EdgeInsets.all(12); // Default padding
+        }
+      });
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.orange[900],
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.orangeAccent[700],
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: SingleChildScrollView(
-                child: Container(
-                  margin: const EdgeInsets.all(12),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 80),
-                        const Text(
-                          "Register Now",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 40,
-                          ),
-                        ),
-                        const SizedBox(height: 50),
-                        buildTextField("Name", nameController, false, null),
-                        const SizedBox(height: 20),
-                        buildTextField(
-                          "Email",
-                          emailController,
-                          false,
-                              (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Email cannot be empty";
-                            }
-                            if (!RegExp(r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]+$").hasMatch(value)) {
-                              return "Please enter a valid email";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        buildTextField(
-                          "Password",
-                          passwordController,
-                          true,
-                              (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Password cannot be empty";
-                            }
-                            if (value.length < 6) {
-                              return "Password must be at least 6 characters long";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        buildTextField(
-                          "Confirm Password",
-                          confirmPassController,
-                          true,
-                              (value) {
-                            if (value != passwordController.text) {
-                              return "Passwords do not match";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        roleSelection(),
-                        const SizedBox(height: 20),
-                        MaterialButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                          elevation: 5.0,
-                          height: 40,
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() {
-                                showProgress = true;
-                              });
-                              signUp(
-                                emailController.text,
-                                passwordController.text,
-                                role,
-                              );
-                            }
-                          },
-                          color: Colors.white,
-                          child: showProgress
-                              ? const CircularProgressIndicator(
-                            color: Colors.orange,
-                          )
-                              : const Text(
-                            "Register",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildTextField(String label, TextEditingController controller, bool isPassword,
-      String? Function(String?)? validator) {
-    return TextFormField(
-      controller: controller,
-      obscureText: isPassword ? _isObscure : false,
-      decoration: InputDecoration(
-        suffixIcon: isPassword
-            ? IconButton(
-          icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
-          onPressed: () {
-            setState(() {
-              _isObscure = !_isObscure;
-            });
-          },
-        )
-            : null,
-        filled: true,
-        fillColor: Colors.white,
-        hintText: label,
-        enabled: true,
-        focusedBorder:
-        OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-        enabledBorder:
-        OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      validator: validator ??
-              (value) => value == null || value.isEmpty
-              ? "$label cannot be empty"
-              : null,
-    );
-  }
-
-  Widget roleSelection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          "Role: ",
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-        DropdownButton<String>(
-          dropdownColor: Colors.orange,
-          value: _currentItemSelected,
-          items: options.map((String role) {
-            return DropdownMenuItem(
-              value: role,
-              child: Text(
-                role,
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _currentItemSelected = value!;
-              role = value;
-            });
-          },
-        ),
-      ],
-    );
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   void signUp(String email, String password, String role) async {
@@ -516,18 +360,15 @@ class RegisterState extends State<Register> {
       setState(() {
         showProgress = false;
       });
-      String errorMessage =
-      e.code == 'email-already-in-use' ? "Email already in use" : "An error occurred";
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(errorMessage)));
+      String errorMessage = e.code == 'email-already-in-use' ? "Email already in use" : "An error occurred";
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 
   Future<void> postDetailsToFirestore(String email, String role) async {
     User? user = _auth.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: const Text("User is not logged in.")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User is not logged in.")));
       return;
     }
     await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
@@ -542,6 +383,201 @@ class RegisterState extends State<Register> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()), // Ensure LoginPage is defined
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.orange[900],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                color: Colors.orangeAccent[700],
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
+                  child: Container(
+                    margin: const EdgeInsets.all(12),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 80),
+                          const Text(
+                            "Register Now",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 40,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          buildTextField("Name", nameController, false, null),
+                          const SizedBox(height: 20),
+                          buildTextField(
+                            "Email",
+                            emailController,
+                            false,
+                            (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Email cannot be empty";
+                              }
+                              if (!RegExp(r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]+$").hasMatch(value)) {
+                                return "Please enter a valid email";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          buildTextField(
+                            "Password",
+                            passwordController,
+                            true,
+                            (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Password cannot be empty";
+                              }
+                              if (value.length < 6) {
+                                return "Password must be at least 6 characters long";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          buildTextField(
+                            "Confirm Password",
+                            confirmPassController,
+                            true,
+                            (value) {
+                              if (value != passwordController.text) {
+                                return "Passwords do not match";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          roleSelection(),
+                          const SizedBox(height: 20),
+                          MaterialButton(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                            elevation: 5.0,
+                            height: 40,
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  showProgress = true;
+                                });
+                                signUp(
+                                  emailController.text,
+                                  passwordController.text,
+                                  role,
+                                );
+                              }
+                            },
+                            color: Colors.white,
+                            child: showProgress
+                                ? const CircularProgressIndicator(
+                                    color: Colors.orange,
+                                  )
+                                : const Text(
+                                    "Submit",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                          ),
+
+                          // const SizedBox(height: 20),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              const Text('Already have and account?'),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => LoginPage()),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  )),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildTextField(String label, TextEditingController controller, bool isPassword, String? Function(String?)? validator) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword ? _isObscure : false,
+      decoration: InputDecoration(
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _isObscure = !_isObscure;
+                  });
+                },
+              )
+            : null,
+        filled: true,
+        fillColor: Colors.white,
+        hintText: label,
+        enabled: true,
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      validator: validator ?? (value) => value == null || value.isEmpty ? "$label cannot be empty" : null,
+    );
+  }
+
+  Widget roleSelection() {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        hintText: "Select Role",
+        contentPadding: _padding,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      value: _currentItemSelected,
+      onChanged: (value) {
+        setState(() {
+          _currentItemSelected = value!;
+          role = value;
+        });
+      },
+      items: options.map((String role) {
+        return DropdownMenuItem(
+          value: role,
+          child: Text(role),
+        );
+      }).toList(),
+      validator: (value) => value == null || value.isEmpty ? "Please select a role" : null,
     );
   }
 }

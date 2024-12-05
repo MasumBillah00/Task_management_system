@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskmanagement/screens/task_screen/calender_task_view.dart';
+import 'package:taskmanagement/screens/task_screen/progressscreen.dart';
 import 'package:taskmanagement/screens/task_screen/task_add_screen.dart';
 import 'package:taskmanagement/screens/task_screen/task_list_screen.dart';
 import 'package:taskmanagement/screens/team/create_team.dart';
@@ -126,6 +127,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   );
                 },
               ),
+              // _buildNavigationCard(
+              //   context,
+              //   title: "Progress Report",
+              //   icon: Icons.show_chart,
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (context) => const TaskPieChartScreen()),
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),
