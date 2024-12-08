@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/models/task_model.dart';
+import '../../widget/component/deadline_picker.dart';
 
 class UpdateTaskScreen extends StatefulWidget {
   final Task task;
@@ -64,7 +65,6 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
       print("Failed to update task: $e");
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,35 +73,35 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-
-            // Static Task Name
-            ListTile(
-              title: const Text('Task Name'),
-              subtitle: Text(widget.task.taskName),
+            // Task Name
+            _buildCustomListTile(
+              title: "Task Name",
+              value: widget.task.taskName,
+              onTap: null, // Read-only, no action needed
             ),
-            const SizedBox(height: 16),
 
-            // Static Priority
-            ListTile(
-              title: const Text('Priority'),
-              subtitle: Text(widget.task.priority),
+            // Priority
+            _buildCustomListTile(
+              title: "Priority",
+              value: widget.task.priority,
+              onTap: null, // Read-only, no action needed
             ),
-            const SizedBox(height: 16),
 
-            // Editable Description
+            // Editable Description as it is
             TextField(
               controller: _descriptionController,
               decoration: const InputDecoration(
                 labelText: 'Description',
-                border: OutlineInputBorder()
+                border: OutlineInputBorder(),
               ),
               maxLines: 3,
             ),
             const SizedBox(height: 16),
-            // Editable Status
+
+            // Status Dropdown
             DropdownButtonFormField<String>(
               value: _status,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Status",
                 border: OutlineInputBorder(),
               ),
@@ -112,46 +112,238 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Editable Deadline
-            ListTile(
-              title: Text("Deadline: ${_deadline != null ? _deadline!.toLocal().toString().split(' ')[0] : 'Select Date'}"),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: _deadline ?? DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(2101),
-                );
-                if (pickedDate != null) setState(() => _deadline = pickedDate);
-              },
+            // Deadline Picker
+            DeadlinePicker(
+              selectedDeadline: _deadline,
+              onDeadlineSelected: (pickedDate) => setState(() => _deadline = pickedDate),
             ),
             const SizedBox(height: 16),
 
-            // Editable Assigned Team Member
-            DropdownButtonFormField<String>(
-              value: _selectedTeamMember,
-              decoration: InputDecoration(
-                labelText: "Assign to Team Member",
-                border: OutlineInputBorder(),
-              ),
-              items: _teamMembers.map((member) {
-                return DropdownMenuItem(value: member, child: Text(member));
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedTeamMember = value;
-                  _assignedUsers = value != null ? [value] : [];
-                });
-              },
-              validator: (value) => value == null ? "Please select a team member" : null,
-            ),
-            const SizedBox(height: 20),
+            // Assigned Team Member Dropdown
+        DropdownButtonFormField<String>(
+                      value: _selectedTeamMember,
+                      decoration: InputDecoration(
+                        labelText: "Assign to Team Member",
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _teamMembers.map((member) {
+                        return DropdownMenuItem(value: member, child: Text(member));
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedTeamMember = value;
+                          _assignedUsers = value != null ? [value] : [];
+                        });
+                      },
+                      validator: (value) => value == null ? "Please select a team member" : null,
+                    ),
 
             // Save Changes Button
             ElevatedButton(
               onPressed: _updateTask,
               child: const Text('Save Changes'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+
+  }
+
+
+// @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(title: const Text("Update Task")),
+  //     body: Padding(
+  //       padding: const EdgeInsets.all(16.0),
+  //       child: ListView(
+  //         children: [
+  //
+  //           // Static Task Name
+  //           ListTile(
+  //             title: const Text('Task Name'),
+  //             subtitle: Text(widget.task.taskName),
+  //           ),
+  //           const SizedBox(height: 16),
+  //
+  //           // Static Priority
+  //           ListTile(
+  //             title: const Text('Priority'),
+  //             subtitle: Text(widget.task.priority),
+  //           ),
+  //           const SizedBox(height: 16),
+  //
+  //           // Editable Description
+  //           TextField(
+  //             controller: _descriptionController,
+  //             decoration: const InputDecoration(
+  //               labelText: 'Description',
+  //               border: OutlineInputBorder()
+  //             ),
+  //             maxLines: 3,
+  //           ),
+  //           const SizedBox(height: 16),
+  //           // Editable Status
+  //           DropdownButtonFormField<String>(
+  //             value: _status,
+  //             decoration: InputDecoration(
+  //               labelText: "Status",
+  //               border: OutlineInputBorder(),
+  //             ),
+  //             items: ['Not Started', 'In Progress', 'Completed']
+  //                 .map((status) => DropdownMenuItem(value: status, child: Text(status)))
+  //                 .toList(),
+  //             onChanged: (value) => setState(() => _status = value!),
+  //           ),
+  //           const SizedBox(height: 16),
+  //
+  //           // Editable Deadline
+  //           // ListTile(
+  //           //   title: Text("Deadline: ${_deadline != null ? _deadline!.toLocal().toString().split(' ')[0] : 'Select Date'}"),
+  //           //   trailing: const Icon(Icons.calendar_today),
+  //           //   onTap: () async {
+  //           //     DateTime? pickedDate = await showDatePicker(
+  //           //       context: context,
+  //           //       initialDate: _deadline ?? DateTime.now(),
+  //           //       firstDate: DateTime.now(),
+  //           //       lastDate: DateTime(2101),
+  //           //     );
+  //           //     if (pickedDate != null) setState(() => _deadline = pickedDate);
+  //           //   },
+  //           // ),
+  //
+  //           ListTile(
+  //             title: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 const Text(
+  //                   "Deadline",
+  //                   style: TextStyle(
+  //                     fontWeight: FontWeight.bold,
+  //                     fontSize: 16,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   _deadline != null
+  //                       ? _deadline!.toLocal().toString().split(' ')[0]
+  //                       : 'Select Date',
+  //                   style: const TextStyle(
+  //                     color: Colors.blue,
+  //                     fontSize: 16,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             trailing: IconButton(
+  //               icon: const Icon(Icons.calendar_today, color: Colors.blue),
+  //               onPressed: () async {
+  //                 DateTime? pickedDate = await showDatePicker(
+  //                   context: context,
+  //                   initialDate: _deadline ?? DateTime.now(),
+  //                   firstDate: DateTime.now(),
+  //                   lastDate: DateTime(2101),
+  //                 );
+  //                 if (pickedDate != null) {
+  //                   setState(() => _deadline = pickedDate);
+  //                 }
+  //               },
+  //             ),
+  //             subtitle: Divider(
+  //               color: Colors.grey.shade300,
+  //               thickness: 1,
+  //             ),
+  //           ),
+  //
+  //           const SizedBox(height: 16),
+  //
+  //           // Editable Assigned Team Member
+  //           DropdownButtonFormField<String>(
+  //             value: _selectedTeamMember,
+  //             decoration: InputDecoration(
+  //               labelText: "Assign to Team Member",
+  //               border: OutlineInputBorder(),
+  //             ),
+  //             items: _teamMembers.map((member) {
+  //               return DropdownMenuItem(value: member, child: Text(member));
+  //             }).toList(),
+  //             onChanged: (value) {
+  //               setState(() {
+  //                 _selectedTeamMember = value;
+  //                 _assignedUsers = value != null ? [value] : [];
+  //               });
+  //             },
+  //             validator: (value) => value == null ? "Please select a team member" : null,
+  //           ),
+  //           const SizedBox(height: 20),
+  //
+  //           // Save Changes Button
+  //           ElevatedButton(
+  //             onPressed: _updateTask,
+  //             child: const Text('Save Changes'),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+
+  Widget _buildCustomListTile({
+    required String title,
+    required String value,
+    required VoidCallback? onTap,
+    String? assetIconPath,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (assetIconPath != null)
+                  Image.asset(
+                    assetIconPath,
+                    width: 30,
+                    height: 30,
+                  ),
+              ],
             ),
           ],
         ),
