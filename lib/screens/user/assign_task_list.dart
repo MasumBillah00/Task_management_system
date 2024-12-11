@@ -6,6 +6,7 @@ import 'package:taskmanagement/screens/user/update_task.dart';
 
 import '../../data/models/task_model.dart';
 import '../../widget/component/deadline_picker.dart';
+import '../task_screen/progressscreen.dart';
 import '../task_screen/task_list_screen.dart';
 
 
@@ -62,6 +63,19 @@ class AssignedTaskListScreen extends StatelessWidget {
                 title: const Text('Home'),
                 onTap: () {
                   Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                    Icons.show_chart
+                ),
+                title: const Text('Task Progress'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  const TaskPieChartScreen(),
+                    ),
+                  );
                 },
               ),
               ListTile(
