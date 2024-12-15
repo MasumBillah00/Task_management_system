@@ -138,6 +138,8 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
                       validator: (value) => value == null ? "Please select a team member" : null,
                     ),
 
+            const SizedBox(height: 10,),
+
             // Save Changes Button
             ElevatedButton(
               onPressed: _updateTask,
@@ -151,144 +153,6 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
 
   }
 
-
-// @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(title: const Text("Update Task")),
-  //     body: Padding(
-  //       padding: const EdgeInsets.all(16.0),
-  //       child: ListView(
-  //         children: [
-  //
-  //           // Static Task Name
-  //           ListTile(
-  //             title: const Text('Task Name'),
-  //             subtitle: Text(widget.task.taskName),
-  //           ),
-  //           const SizedBox(height: 16),
-  //
-  //           // Static Priority
-  //           ListTile(
-  //             title: const Text('Priority'),
-  //             subtitle: Text(widget.task.priority),
-  //           ),
-  //           const SizedBox(height: 16),
-  //
-  //           // Editable Description
-  //           TextField(
-  //             controller: _descriptionController,
-  //             decoration: const InputDecoration(
-  //               labelText: 'Description',
-  //               border: OutlineInputBorder()
-  //             ),
-  //             maxLines: 3,
-  //           ),
-  //           const SizedBox(height: 16),
-  //           // Editable Status
-  //           DropdownButtonFormField<String>(
-  //             value: _status,
-  //             decoration: InputDecoration(
-  //               labelText: "Status",
-  //               border: OutlineInputBorder(),
-  //             ),
-  //             items: ['Not Started', 'In Progress', 'Completed']
-  //                 .map((status) => DropdownMenuItem(value: status, child: Text(status)))
-  //                 .toList(),
-  //             onChanged: (value) => setState(() => _status = value!),
-  //           ),
-  //           const SizedBox(height: 16),
-  //
-  //           // Editable Deadline
-  //           // ListTile(
-  //           //   title: Text("Deadline: ${_deadline != null ? _deadline!.toLocal().toString().split(' ')[0] : 'Select Date'}"),
-  //           //   trailing: const Icon(Icons.calendar_today),
-  //           //   onTap: () async {
-  //           //     DateTime? pickedDate = await showDatePicker(
-  //           //       context: context,
-  //           //       initialDate: _deadline ?? DateTime.now(),
-  //           //       firstDate: DateTime.now(),
-  //           //       lastDate: DateTime(2101),
-  //           //     );
-  //           //     if (pickedDate != null) setState(() => _deadline = pickedDate);
-  //           //   },
-  //           // ),
-  //
-  //           ListTile(
-  //             title: Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //               children: [
-  //                 const Text(
-  //                   "Deadline",
-  //                   style: TextStyle(
-  //                     fontWeight: FontWeight.bold,
-  //                     fontSize: 16,
-  //                   ),
-  //                 ),
-  //                 Text(
-  //                   _deadline != null
-  //                       ? _deadline!.toLocal().toString().split(' ')[0]
-  //                       : 'Select Date',
-  //                   style: const TextStyle(
-  //                     color: Colors.blue,
-  //                     fontSize: 16,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //             trailing: IconButton(
-  //               icon: const Icon(Icons.calendar_today, color: Colors.blue),
-  //               onPressed: () async {
-  //                 DateTime? pickedDate = await showDatePicker(
-  //                   context: context,
-  //                   initialDate: _deadline ?? DateTime.now(),
-  //                   firstDate: DateTime.now(),
-  //                   lastDate: DateTime(2101),
-  //                 );
-  //                 if (pickedDate != null) {
-  //                   setState(() => _deadline = pickedDate);
-  //                 }
-  //               },
-  //             ),
-  //             subtitle: Divider(
-  //               color: Colors.grey.shade300,
-  //               thickness: 1,
-  //             ),
-  //           ),
-  //
-  //           const SizedBox(height: 16),
-  //
-  //           // Editable Assigned Team Member
-  //           DropdownButtonFormField<String>(
-  //             value: _selectedTeamMember,
-  //             decoration: InputDecoration(
-  //               labelText: "Assign to Team Member",
-  //               border: OutlineInputBorder(),
-  //             ),
-  //             items: _teamMembers.map((member) {
-  //               return DropdownMenuItem(value: member, child: Text(member));
-  //             }).toList(),
-  //             onChanged: (value) {
-  //               setState(() {
-  //                 _selectedTeamMember = value;
-  //                 _assignedUsers = value != null ? [value] : [];
-  //               });
-  //             },
-  //             validator: (value) => value == null ? "Please select a team member" : null,
-  //           ),
-  //           const SizedBox(height: 20),
-  //
-  //           // Save Changes Button
-  //           ElevatedButton(
-  //             onPressed: _updateTask,
-  //             child: const Text('Save Changes'),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
 
   Widget _buildCustomListTile({

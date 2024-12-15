@@ -44,6 +44,8 @@ class Task {
       'deadline': Timestamp.fromDate(deadline),
       'assignedUsers': assignedUsers,
       'status': status,
+      'isSynced': isSynced ? 1 : 0,
+
     };
   }
 }

@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanagement/screens/user/taskupdatehistory.dart';
 import 'package:taskmanagement/screens/user/update_task.dart';
 
 import '../../data/models/task_model.dart';
@@ -269,6 +270,19 @@ class AssignedTaskListScreen extends StatelessWidget {
                               ),
                             ),
                           )),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TaskHistoryPage(taskId: '',),
+                          ),
+                        );
+                      },
+                      child: const Text('View Update History'),
+                    ),
+
                   ],
                 );
               },
